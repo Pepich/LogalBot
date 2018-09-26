@@ -34,13 +34,14 @@ public class DataManager {
 	private static final HashMap<User, HashMap<String, String>> dataCache = new HashMap<>();
 
 	private static void loadData(User user){
-		File jsonFile = new File(dataDirectory +  File.separator + user.getId() + ".json");
+		File jsonFile = new File(dataDirectory + File.separator + user.getId() + ".json");
 
 		if (jsonFile.exists()){
 			logger.info("Loading data file for '" + user.getName() + "' from '" + jsonFile.getAbsolutePath() + "'...");
 			try (Reader reader = new FileReader(jsonFile.getAbsolutePath())){
 				Gson gson = new GsonBuilder().create();
-				dataCache.put(user, gson.fromJson(reader, new TypeToken<HashMap<String, String>>(){}.getType()));
+				dataCache.put(user, gson.fromJson(reader, new TypeToken<HashMap<String, String>>() {
+				}.getType()));
 			} catch (IOException exception){
 				logger.error("An error occured while loading the data file at '" + jsonFile.getAbsolutePath() + "'!");
 				exception.printStackTrace();
@@ -55,7 +56,7 @@ public class DataManager {
 	}
 
 	private static void saveData(User user){
-		File jsonFile = new File(dataDirectory +  File.separator + user.getId() + ".json");
+		File jsonFile = new File(dataDirectory + File.separator + user.getId() + ".json");
 
 		logger.info("Saving data file for '" + user.getName() + "' at '" + jsonFile.getAbsolutePath() + "'...");
 		try (Writer writer = new FileWriter(jsonFile.getAbsolutePath())){
