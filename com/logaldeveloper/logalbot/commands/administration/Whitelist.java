@@ -32,6 +32,10 @@ public class Whitelist implements Command {
 
 	@Override
 	public String execute(String[] arguments, User executor, TextChannel channel){
+		if (!executor.equals(Main.getOwner())){
+			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.";
+		}
+
 		if (arguments.length == 0){
 			StringBuilder reply = new StringBuilder(":bookmark_tabs: " + executor.getAsMention() + ", the following users are on the whitelist:\n");
 			for (String userID : PermissionManager.getWhitelistedUsers()){
