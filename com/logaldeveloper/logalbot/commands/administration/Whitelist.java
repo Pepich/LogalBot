@@ -26,7 +26,6 @@ import net.dv8tion.jda.core.entities.User;
 public class Whitelist implements Command {
 	@Override
 	public void initialize(){
-		PermissionManager.loadWhitelistFile();
 		PermissionManager.addToWhitelist(Main.getOwner());
 	}
 
@@ -37,11 +36,7 @@ public class Whitelist implements Command {
 		}
 
 		if (arguments.length == 0){
-			StringBuilder reply = new StringBuilder(":bookmark_tabs: " + executor.getAsMention() + ", the following users are on the whitelist:\n");
-			for (String userID : PermissionManager.getWhitelistedUsers()){
-				reply.append(":arrow_right: ").append(Main.getJDA().getUserById(userID).getAsMention()).append("\n");
-			}
-			return reply.toString();
+			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you need to specify a user to add or remove from the whitelist.";
 		}
 
 		String userID = arguments[0].replaceFirst("!", "").replaceFirst("<@(.*?)>", "$1");

@@ -43,7 +43,6 @@ public class Main {
 	private static final String ownerUserID = System.getenv("OWNER_USER_ID");
 	private static final String guildName = System.getenv("GUILD_NAME");
 	private static final String textChannelNameForAudioCommands = System.getenv("AUDIO_COMMANDS_TEXT_CHANNEL");
-	private static final String whitelistedUsersFile = "whitelisted-users.json";
 
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	private static Guild guild;
@@ -51,7 +50,7 @@ public class Main {
 	private static User owner;
 
 	public static void main(String[] arguments){
-		logger.info("Beginning setup of LogalBot.,,");
+		logger.info("Beginning setup of LogalBot...");
 
 		logger.info("Attempting to log into Discord...");
 		try{
@@ -126,10 +125,6 @@ public class Main {
 
 	public static String getTextChannelNameForAudioCommands(){
 		return textChannelNameForAudioCommands;
-	}
-
-	public static String getWhitelistedUsersFile(){
-		return whitelistedUsersFile;
 	}
 
 	public static JDA getJDA(){
