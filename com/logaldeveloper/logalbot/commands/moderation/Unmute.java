@@ -26,7 +26,8 @@ import net.dv8tion.jda.core.entities.User;
 
 public class Unmute implements Command {
 	@Override
-	public void initialize(){}
+	public void initialize(){
+	}
 
 	@Override
 	public String execute(String[] arguments, User executor, TextChannel channel){

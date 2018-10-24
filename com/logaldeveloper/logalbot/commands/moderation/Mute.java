@@ -27,7 +27,8 @@ import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction;
 
 public class Mute implements Command {
 	@Override
-	public void initialize(){}
+	public void initialize(){
+	}
 
 	@Override
 	public String execute(String[] arguments, User executor, TextChannel channel){
