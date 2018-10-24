@@ -23,6 +23,8 @@ import com.logaldeveloper.logalbot.commands.audio.*;
 import com.logaldeveloper.logalbot.commands.fun.EightBall;
 import com.logaldeveloper.logalbot.commands.general.About;
 import com.logaldeveloper.logalbot.commands.general.Help;
+import com.logaldeveloper.logalbot.commands.moderation.Mute;
+import com.logaldeveloper.logalbot.commands.moderation.Unmute;
 import com.logaldeveloper.logalbot.events.GuildMessageReceived;
 import com.logaldeveloper.logalbot.events.GuildVoiceLeave;
 import com.logaldeveloper.logalbot.events.GuildVoiceMove;
@@ -116,6 +118,10 @@ public class Main {
 
 		// Administration Commands
 		CommandManager.registerCommand("whitelist", new Whitelist(), true);
+
+		// Moderation Commands
+		CommandManager.registerCommand("mute", new Mute(), true);
+		CommandManager.registerCommand("unmute", new Unmute(), true);
 
 		logger.info("Everything seems to be ready! Enabling command listener...");
 		jda.addEventListener(new GuildMessageReceived());

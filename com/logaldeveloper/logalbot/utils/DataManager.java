@@ -78,6 +78,15 @@ public class DataManager {
 		return dataCache.get(user).get(key);
 	}
 
+	public static String getValueOrUseDefault(User user, String key, String defaultValue){
+		if (getValue(user, key) == null){
+			setValue(user, key, defaultValue);
+			return defaultValue;
+		} else {
+			return getValue(user, key);
+		}
+	}
+
 	public static void setValue(User user, String key, String value){
 		if (!dataCache.containsKey(user)){
 			loadData(user);
