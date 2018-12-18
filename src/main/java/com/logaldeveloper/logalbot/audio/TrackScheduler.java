@@ -131,7 +131,7 @@ public class TrackScheduler extends AudioEventAdapter {
 			CommandManager.reinitializeCommand("volume");
 			CommandManager.reinitializeCommand("lock");
 			CommandManager.reinitializeCommand("pause");
-			Main.getJDA().getPresence().setGame(Game.listening("Silence"));
+			Main.getJDA().getPresence().setGame(null);
 			logger.info("Disconnecting from voice channel '" + VoiceChannelUtil.getCurrentVoiceChannel().getName() + "' in 1 minute...");
 			idleLogoutTask = Scheduler.schedule(new IdleLogoutThread(), 1, TimeUnit.MINUTES);
 		}

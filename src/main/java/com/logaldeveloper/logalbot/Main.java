@@ -126,7 +126,6 @@ public class Main {
 		logger.info("Everything seems to be ready! Enabling command listener...");
 		jda.addEventListener(new GuildMessageReceived());
 		logger.info("Initialization complete!");
-		jda.getPresence().setGame(Game.listening("Silence"));
 	}
 
 	public static String getTextChannelNameForAudioCommands(){
