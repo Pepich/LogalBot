@@ -15,15 +15,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.logaldeveloper.logalbot.threads;
+package com.logaldeveloper.logalbot.utils;
 
-import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.concurrent.*;
 
-public class IdleLogoutThread implements Runnable {
-	@Override
-	public void run(){
-		VoiceChannelUtil.leaveCurrentVoiceChannel();
+public class Scheduler {
+	private static final ScheduledExecutorService schedulerPool = Executors.newScheduledThreadPool(1);
+
+	public static ScheduledFuture schedule(Runnable runnable, long delay, TimeUnit unit){
+		return schedulerPool.schedule(runnable, delay, unit);
 	}
+
+	public static ScheduledFuture scheduleAtFixedRate(Runnable runnable, long initialDelay, long period, TimeUnit unit){
+		return schedulerPool.scheduleAtFixedRate(runnable, initialDelay, period, unit);
+	}
+
+
 }

@@ -22,6 +22,7 @@ import com.logaldeveloper.logalbot.commands.CommandManager;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
 import com.logaldeveloper.logalbot.threads.IdleLogoutThread;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
+import com.logaldeveloper.logalbot.utils.Scheduler;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -33,12 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class TrackScheduler extends AudioEventAdapter {
 	private static final ArrayList<AudioTrack> queue = new ArrayList<>();
 	private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
 	private static boolean queueLocked = false;
-	private static Thread idleLogoutThread;
+	private static ScheduledFuture idleLogoutTask;
 
 	@SuppressWarnings("ConstantConditions")
 	static void addToQueue(AudioTrack track, User requester){
@@ -110,8 +113,9 @@ public class TrackScheduler extends AudioEventAdapter {
 		logger.info("Track '" + track.getInfo().title + "' has started.");
 		Main.getJDA().getPresence().setGame(Game.listening(track.getInfo().title));
 		CommandManager.reinitializeCommand("skip");
-		if (!(idleLogoutThread == null)){
-			idleLogoutThread.interrupt();
+		if (idleLogoutTask != null && !idleLogoutTask.isDone()){
+			logger.info("A track has started. Cancelling scheduled disconnect.");
+			idleLogoutTask.cancel(true);
 		}
 
 	}
@@ -128,9 +132,8 @@ public class TrackScheduler extends AudioEventAdapter {
 			CommandManager.reinitializeCommand("lock");
 			CommandManager.reinitializeCommand("pause");
 			Main.getJDA().getPresence().setGame(Game.listening("Silence"));
-			idleLogoutThread = new Thread(new IdleLogoutThread());
-			idleLogoutThread.setName("Idle Logout Thread");
-			idleLogoutThread.start();
+			logger.info("Disconnecting from voice channel '" + VoiceChannelUtil.getCurrentVoiceChannel().getName() + "' in 1 minute...");
+			idleLogoutTask = Scheduler.schedule(new IdleLogoutThread(), 1, TimeUnit.MINUTES);
 		}
 		CommandManager.reinitializeCommand("skip");
 	}
