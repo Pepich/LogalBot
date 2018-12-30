@@ -20,6 +20,7 @@ package com.logaldeveloper.logalbot.commands;
 import com.logaldeveloper.logalbot.tasks.MessageDeleteTask;
 import com.logaldeveloper.logalbot.utils.Scheduler;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class CommandResponse {
 	private String emoji;
 	private String response;
+	private MessageEmbed embedResponse;
 
 	private long deletionDelay = 0;
 	private TimeUnit deletionDelayUnit;
@@ -36,6 +38,10 @@ public class CommandResponse {
 		this.response = response;
 	}
 
+	public CommandResponse(MessageEmbed embed){
+		this.embedResponse = embed;
+	}
+
 	public CommandResponse setDeletionDelay(long delay, TimeUnit unit){
 		this.deletionDelay = delay;
 		this.deletionDelayUnit = unit;
@@ -43,7 +49,12 @@ public class CommandResponse {
 	}
 
 	public void sendResponse(TextChannel channel){
-		Message responseMessage = channel.sendMessage(":" + emoji + ": " + response).complete();
+		Message responseMessage;
+		if (response != null){
+			responseMessage = channel.sendMessage(":" + emoji + ": " + response).complete();
+		} else {
+			responseMessage = channel.sendMessage(embedResponse).complete();
+		}
 
 		if ((deletionDelay != 0) && (deletionDelayUnit != null)){
 			Scheduler.schedule(new MessageDeleteTask(responseMessage), deletionDelay, deletionDelayUnit);
