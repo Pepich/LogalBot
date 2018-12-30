@@ -20,7 +20,7 @@ package com.logaldeveloper.logalbot.audio;
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.CommandManager;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
-import com.logaldeveloper.logalbot.threads.IdleLogoutThread;
+import com.logaldeveloper.logalbot.tasks.IdleLogoutTask;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.Scheduler;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
@@ -133,7 +133,7 @@ public class TrackScheduler extends AudioEventAdapter {
 			CommandManager.reinitializeCommand("pause");
 			Main.getJDA().getPresence().setGame(null);
 			logger.info("Disconnecting from voice channel '" + VoiceChannelUtil.getCurrentVoiceChannel().getName() + "' in 1 minute...");
-			idleLogoutTask = Scheduler.schedule(new IdleLogoutThread(), 1, TimeUnit.MINUTES);
+			idleLogoutTask = Scheduler.schedule(new IdleLogoutTask(), 1, TimeUnit.MINUTES);
 		}
 		CommandManager.reinitializeCommand("skip");
 	}

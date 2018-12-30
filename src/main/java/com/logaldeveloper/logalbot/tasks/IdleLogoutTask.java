@@ -15,19 +15,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.logaldeveloper.logalbot.threads;
+package com.logaldeveloper.logalbot.tasks;
 
-import net.dv8tion.jda.core.entities.Message;
+import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 
-public class MessageDeleterThread implements Runnable {
-	private Message messageToDelete;
-
-	public MessageDeleterThread(Message message){
-		this.messageToDelete = message;
-	}
-
+public class IdleLogoutTask implements Runnable {
 	@Override
 	public void run(){
-		messageToDelete.delete().queue();
+		VoiceChannelUtil.leaveCurrentVoiceChannel();
 	}
 }
