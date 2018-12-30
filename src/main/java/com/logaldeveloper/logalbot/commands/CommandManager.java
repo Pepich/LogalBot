@@ -17,7 +17,6 @@
 
 package com.logaldeveloper.logalbot.commands;
 
-import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
@@ -25,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class CommandManager {
 	private static final HashMap<String, Command> commandMap = new HashMap<>();
@@ -32,40 +32,39 @@ public class CommandManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(CommandManager.class);
 
-	public static void executeCommand(String[] command, User executor, TextChannel channel, Message message){
+	public static void executeCommand(String[] command, User executor, TextChannel channel){
 		String commandName = command[0].toLowerCase();
 		String[] arguments = Arrays.copyOfRange(command, 1, command.length);
+		CommandResponse response;
 		if (!commandMap.containsKey(commandName)){
+			response = new CommandResponse("question", "Sorry " + executor.getAsMention() + ", but I do not know what that command is.");
+			response.setDeletionDelay(10, TimeUnit.SECONDS);
+			response.sendResponse(channel);
 			return;
 		}
 
-		String usageLog = executor.getName() + " executed command '" + commandName + "' with arguments '" + String.join(" ", arguments) + "'";
-		message.delete().reason("A valid LogalBot command was executed.").queue();
+		logger.info(executor.getName() + " executed command '" + commandName + "' with arguments '" + String.join(" ", arguments) + "'");
 
 		if (permissionMap.get(commandName) && !PermissionManager.isWhitelisted(executor)){
-			logger.info(usageLog + ", but was denied usage access due to not being on the whitelist.");
-			channel.sendMessage(":no_entry_sign: Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.").queue();
+			logger.info(executor.getName() + " was denied access to command due to not being on the whitelist.");
+			response = new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.");
+			response.setDeletionDelay(10, TimeUnit.SECONDS);
+			response.sendResponse(channel);
 			return;
 		}
 
-		String response;
 		try{
 			response = commandMap.get(commandName).execute(arguments, executor, channel);
 		} catch (Throwable exception){
-			logger.warn(usageLog + ", but an error occurred while executing the command!");
-			response = ":sos: Sorry " + executor.getAsMention() + ", but an error occurred while executing your command!";
+			logger.info("An error occured while executing " + executor.getAsMention() + "'s command!");
 			exception.printStackTrace();
+			response = new CommandResponse("sos", "Sorry " + executor.getAsMention() + ", but an error occurred while executing your command! Please contact " + executor.getAsMention() + " about this!");
+			response.setDeletionDelay(10, TimeUnit.SECONDS);
+			response.sendResponse(channel);
 		}
 
-		if (response == null){
-			logger.warn(usageLog + ", but the command did not return a response!");
-			response = ":sos: Sorry " + executor.getAsMention() + ", but an error occurred while executing your command!";
-		}
-
-		logger.info(usageLog + ".");
-
-		if (!response.equals("")){
-			channel.sendMessage(response).queue();
+		if (response != null){
+			response.sendResponse(channel);
 		}
 	}
 

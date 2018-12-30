@@ -19,9 +19,12 @@ package com.logaldeveloper.logalbot.commands.administration;
 
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
+import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+
+import java.util.concurrent.TimeUnit;
 
 public class Whitelist implements Command {
 	@Override
@@ -30,42 +33,41 @@ public class Whitelist implements Command {
 	}
 
 	@Override
-	public String execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!executor.equals(Main.getOwner())){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (arguments.length == 0){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you need to specify a user to add or remove from the whitelist.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to specify a user to add or remove from the whitelist.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		String userID = arguments[0].replaceFirst("!", "").replaceFirst("<@(.*?)>", "$1");
+		String userID = arguments[0].replaceFirst("<@[!]?([0-9]*)>", "$1");
 		User user;
 		try{
 			user = Main.getJDA().getUserById(userID);
 		} catch (Throwable exception){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but that doesn't appear to be a valid user.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but that doesn't appear to be a valid user.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-
 		if (user == null){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but that doesn't appear to be a valid user.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but that doesn't appear to be a valid user.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (user.equals(Main.getOwner())){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you are not allowed to remove that user from the whitelist.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to remove that user from the whitelist.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (user.isBot()){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you cannot whitelist bots.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you cannot whitelist bots.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (PermissionManager.isWhitelisted(user)){
 			PermissionManager.removeFromWhitelist(user);
-			return ":heavy_multiplication_x: " + executor.getAsMention() + " has removed " + user.getAsMention() + " from the whitelist.";
+			return new CommandResponse("heavy_multiplication_x", executor.getAsMention() + " has removed " + user.getAsMention() + " from the whitelist.");
 		} else {
 			PermissionManager.addToWhitelist(user);
-			return ":heavy_check_mark: " + executor.getAsMention() + " has added " + user.getAsMention() + " to the whitelist.";
+			return new CommandResponse("heavy_check_mark", executor.getAsMention() + " has added " + user.getAsMention() + " to the whitelist.");
 		}
 	}
 }

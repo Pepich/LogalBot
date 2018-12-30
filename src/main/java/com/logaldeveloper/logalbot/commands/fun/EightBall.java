@@ -18,11 +18,13 @@
 package com.logaldeveloper.logalbot.commands.fun;
 
 import com.logaldeveloper.logalbot.commands.Command;
+import com.logaldeveloper.logalbot.commands.CommandResponse;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class EightBall implements Command {
 	private static final ArrayList<String> responses = new ArrayList<>();
@@ -55,13 +57,13 @@ public class EightBall implements Command {
 	}
 
 	@Override
-	public String execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (arguments.length == 0){
-			return ":no_entry_sign: Sorry, " + executor.getAsMention() + ", but you need to supply a question for the Magic 8 Ball.";
+			return new CommandResponse("no_entry_sign", "Sorry, " + executor.getAsMention() + ", but you need to supply a question for the Magic 8 Ball.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		String question = String.join(" ", arguments).replaceAll("`", "'");
 
-		return ":question: " + executor.getAsMention() + " asked the Magic 8 Ball: `" + question + "`\n:8ball: The Magic 8 Ball responds: *" + responses.get(rng.nextInt(responses.size())) + "*.";
+		return new CommandResponse("question", executor.getAsMention() + " asked the Magic 8 Ball: `" + question + "`\n:8ball: The Magic 8 Ball responds: *" + responses.get(rng.nextInt(responses.size())) + "*.");
 	}
 }

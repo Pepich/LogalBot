@@ -20,9 +20,12 @@ package com.logaldeveloper.logalbot.commands.audio;
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
+import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+
+import java.util.concurrent.TimeUnit;
 
 public class Lock implements Command {
 	@Override
@@ -31,17 +34,17 @@ public class Lock implements Command {
 	}
 
 	@Override
-	public String execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (TrackScheduler.isQueueLocked()){
 			TrackScheduler.setQueueLocked(false);
-			return ":unlock: " + executor.getAsMention() + " unlocked the queue.";
+			return new CommandResponse("unlock", executor.getAsMention() + " unlocked the queue.");
 		} else {
 			TrackScheduler.setQueueLocked(true);
-			return ":lock: " + executor.getAsMention() + " locked the queue.";
+			return new CommandResponse("lock", executor.getAsMention() + " locked the queue.");
 		}
 	}
 }

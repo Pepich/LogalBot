@@ -20,6 +20,7 @@ package com.logaldeveloper.logalbot.commands.audio;
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
+import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
@@ -28,6 +29,7 @@ import net.dv8tion.jda.core.entities.User;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 public class Play implements Command {
 	@Override
@@ -35,25 +37,25 @@ public class Play implements Command {
 	}
 
 	@Override
-	public String execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (TrackScheduler.isQueueLocked() && !PermissionManager.isWhitelisted(executor)){
-			return ":lock: Sorry " + executor.getAsMention() + ", but the queue is locked.";
+			return new CommandResponse("lock", "Sorry " + executor.getAsMention() + ", but the queue is locked.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (AudioUtil.isTrackLoaded() && !VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel().getName() + "` in order to add songs to the queue.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel().getName() + "` in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (VoiceChannelUtil.getCurrentVoiceChannelFromUser(executor) == null){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you need to be in a voice channel in order to add songs to the queue.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in a voice channel in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (arguments.length == 0){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you need to provide a search query or a link to a specific track or playlist.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to provide a search query or a link to a specific track or playlist.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		boolean isLink;
@@ -75,6 +77,6 @@ public class Play implements Command {
 		}
 
 		AudioUtil.findTrack(query.toString(), executor, channel);
-		return "";
+		return null;
 	}
 }

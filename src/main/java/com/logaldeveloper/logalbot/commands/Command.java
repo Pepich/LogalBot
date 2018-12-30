@@ -23,5 +23,5 @@ import net.dv8tion.jda.core.entities.User;
 public interface Command {
 	void initialize();
 
-	String execute(String[] arguments, User executor, TextChannel channel);
+	CommandResponse execute(String[] arguments, User executor, TextChannel channel);
 }

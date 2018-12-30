@@ -19,6 +19,7 @@ package com.logaldeveloper.logalbot.commands.general;
 
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
+import com.logaldeveloper.logalbot.commands.CommandResponse;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -28,9 +29,9 @@ public class About implements Command {
 	}
 
 	@Override
-	public String execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		String message = "";
-		message += ":wave: Hey there " + executor.getAsMention() + "! ";
+		message += "Hey there " + executor.getAsMention() + "! ";
 		if (Main.getJDA().getSelfUser().getName().equalsIgnoreCase("LogalBot")){
 			message += "I'm " + Main.getJDA().getSelfUser().getName() + ", a bot created by LogalDeveloper but maintained by " + Main.getOwner().getAsMention() + ".\n";
 			message += "My GitHub repository can be found here: https://github.com/LogalDeveloper/LogalBot";
@@ -38,6 +39,6 @@ public class About implements Command {
 			message += "I'm " + Main.getJDA().getSelfUser().getName() + ", a fork of LogalBot maintained by " + Main.getOwner().getAsMention() + ".\n";
 			message += "My core GitHub repository can be found here: https://github.com/LogalDeveloper/LogalBot";
 		}
-		return message;
+		return new CommandResponse("wave", message);
 	}
 }

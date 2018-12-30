@@ -20,11 +20,14 @@ package com.logaldeveloper.logalbot.commands.audio;
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
+import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+
+import java.util.concurrent.TimeUnit;
 
 public class ForceSkip implements Command {
 	@Override
@@ -32,21 +35,21 @@ public class ForceSkip implements Command {
 	}
 
 	@Override
-	public String execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (!AudioUtil.isTrackLoaded()){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but there must be a track playing in order to force skip it.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to force skip it.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (!VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel().getName() + "` in order to force skip tracks.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel().getName() + "` in order to force skip tracks.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		AudioTrack skippedTrack = AudioUtil.getLoadedTrack();
 		TrackScheduler.skipCurrentTrack();
-		return ":gun: " + executor.getAsMention() + " force skipped **" + skippedTrack.getInfo().title + "**.";
+		return new CommandResponse("gun", executor.getAsMention() + " force skipped **" + skippedTrack.getInfo().title + "**.");
 	}
 }

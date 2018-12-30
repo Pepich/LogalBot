@@ -19,10 +19,13 @@ package com.logaldeveloper.logalbot.commands.audio;
 
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
+import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+
+import java.util.concurrent.TimeUnit;
 
 public class Pause implements Command {
 	@Override
@@ -31,25 +34,25 @@ public class Pause implements Command {
 	}
 
 	@Override
-	public String execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (!AudioUtil.isTrackLoaded()){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but there must be a track playing in order to pause or resume the player.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to pause or resume the player.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (!VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel().getName() + "` in order to pause or unplause the player.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel().getName() + "` in order to pause or unplause the player.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (AudioUtil.isPlayerPaused()){
 			AudioUtil.setPausedState(false);
-			return ":arrow_forward: " + executor.getAsMention() + " resumed the track player.";
+			return new CommandResponse("arrow_forward", executor.getAsMention() + " resumed the track player.");
 		} else {
 			AudioUtil.setPausedState(true);
-			return ":pause_button: " + executor.getAsMention() + " paused the track player.";
+			return new CommandResponse("pause_button", executor.getAsMention() + " paused the track player.");
 		}
 	}
 }

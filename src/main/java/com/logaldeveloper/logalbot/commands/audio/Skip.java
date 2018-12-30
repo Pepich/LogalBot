@@ -20,6 +20,7 @@ package com.logaldeveloper.logalbot.commands.audio;
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
+import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -27,6 +28,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Skip implements Command {
 	private ArrayList<String> skipVotes;
@@ -37,21 +39,21 @@ public class Skip implements Command {
 	}
 
 	@Override
-	public String execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (!AudioUtil.isTrackLoaded()){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but there must be a track playing in order to vote to skip it.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to vote to skip it.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (!VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel().getName() + "` in order to vote to skip tracks.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel().getName() + "` in order to vote to skip tracks.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (skipVotes.contains(executor.getId())){
-			return ":no_entry_sign: You have already voted to skip this track " + executor.getAsMention() + ".";
+			return new CommandResponse("no_entry_sign", "You have already voted to skip this track " + executor.getAsMention() + ".").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		int listeners = (int) VoiceChannelUtil.getCurrentVoiceChannel().getMembers().stream().filter(member -> !member.getUser().isBot()).count();
@@ -60,12 +62,12 @@ public class Skip implements Command {
 		if (skipVotes.size() >= required){
 			AudioTrack skippedTrack = AudioUtil.getLoadedTrack();
 			TrackScheduler.skipCurrentTrack();
-			return ":gun: **" + skippedTrack.getInfo().title + "** has been skipped.";
+			return new CommandResponse("gun", "**" + skippedTrack.getInfo().title + "** has been skipped.");
 		} else {
 			if ((required - skipVotes.size()) == 1){
-				return ":x: " + executor.getAsMention() + " has voted to skip this track. " + (required - skipVotes.size()) + " more vote is needed.";
+				return new CommandResponse("x", executor.getAsMention() + " has voted to skip this track. " + (required - skipVotes.size()) + " more vote is needed.");
 			} else {
-				return ":x: " + executor.getAsMention() + " has voted to skip this track. " + (required - skipVotes.size()) + " more votes are needed.";
+				return new CommandResponse("x", executor.getAsMention() + " has voted to skip this track. " + (required - skipVotes.size()) + " more votes are needed.");
 			}
 		}
 	}

@@ -19,9 +19,12 @@ package com.logaldeveloper.logalbot.commands.audio;
 
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
+import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+
+import java.util.concurrent.TimeUnit;
 
 public class Volume implements Command {
 	@Override
@@ -30,16 +33,16 @@ public class Volume implements Command {
 	}
 
 	@Override
-	public String execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (arguments.length == 0){
 			if (AudioUtil.getVolume() >= 75){
-				return ":loud_sound: " + executor.getAsMention() + ", the volume is currently set to `" + AudioUtil.getVolume() + "%`.";
+				return new CommandResponse("loud_sound", executor.getAsMention() + ", the volume is currently set to `" + AudioUtil.getVolume() + "%`.");
 			} else {
-				return ":sound: " + executor.getAsMention() + ", the volume is currently set to `" + AudioUtil.getVolume() + "%`.";
+				return new CommandResponse("sound", executor.getAsMention() + ", the volume is currently set to `" + AudioUtil.getVolume() + "%`.");
 			}
 		}
 
@@ -47,19 +50,19 @@ public class Volume implements Command {
 		try{
 			volume = Integer.parseInt(arguments[0]);
 		} catch (NumberFormatException exception){
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but the volume must be a number.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but the volume must be an integer.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (volume <= 150 && volume >= 1){
 			int oldVolume = AudioUtil.getVolume();
 			AudioUtil.setVolume(volume);
 			if (volume >= 75){
-				return ":loud_sound: " + executor.getAsMention() + " set the volume from `" + oldVolume + "%` to `" + volume + "%`.";
+				return new CommandResponse("loud_sound", executor.getAsMention() + " set the volume from `" + oldVolume + "%` to `" + volume + "%`.");
 			} else {
-				return ":sound: " + executor.getAsMention() + " set the volume from `" + oldVolume + "%` to `" + volume + "%`.";
+				return new CommandResponse("sound", executor.getAsMention() + " set the volume from `" + oldVolume + "%` to `" + volume + "%`.");
 			}
 		} else {
-			return ":no_entry_sign: Sorry " + executor.getAsMention() + ", but the volume must be between 1% and 150%.";
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but the volume must be between 1% and 150%.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 	}
 }

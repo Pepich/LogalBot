@@ -18,8 +18,6 @@
 package com.logaldeveloper.logalbot.threads;
 
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IdleLogoutThread implements Runnable {
 	@Override

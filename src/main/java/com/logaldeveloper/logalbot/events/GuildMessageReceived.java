@@ -47,7 +47,8 @@ public class GuildMessageReceived extends ListenerAdapter {
 			String[] rawCommand = rawMessage.split(" ");
 			String[] command = Arrays.copyOfRange(rawCommand, 1, rawCommand.length);
 			if (command.length >= 1){
-				CommandManager.executeCommand(command, event.getAuthor(), event.getChannel(), message);
+				message.delete().reason("LogalBot Command Execution.").queue();
+				CommandManager.executeCommand(command, event.getAuthor(), event.getChannel());
 			}
 		}
 	}

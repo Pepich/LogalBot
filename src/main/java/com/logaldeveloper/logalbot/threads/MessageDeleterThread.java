@@ -15,20 +15,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.logaldeveloper.logalbot.commands.general;
+package com.logaldeveloper.logalbot.threads;
 
-import com.logaldeveloper.logalbot.commands.Command;
-import com.logaldeveloper.logalbot.commands.CommandResponse;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.Message;
 
-public class Help implements Command {
-	@Override
-	public void initialize(){
+public class MessageDeleterThread implements Runnable {
+	private Message messageToDelete;
+
+	public MessageDeleterThread(Message message){
+		this.messageToDelete = message;
 	}
 
 	@Override
-	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
-		return new CommandResponse("page_facing_up", executor.getAsMention() + ", you can find the command reference at the following link:\nhttps://logaldeveloper.com/projects/logalbot/command-reference/");
+	public void run(){
+		messageToDelete.delete().queue();
 	}
 }
