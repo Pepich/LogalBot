@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class CommandResponse {
 	private String emoji;
 	private String response;
-	private MessageEmbed embedResponse;
+	private MessageEmbed responseEmbed;
 
 	private long deletionDelay = 0;
 	private TimeUnit deletionDelayUnit;
@@ -38,8 +38,9 @@ public class CommandResponse {
 		this.response = response;
 	}
 
-	public CommandResponse(MessageEmbed embed){
-		this.embedResponse = embed;
+	public CommandResponse attachEmbed(MessageEmbed embed){
+		this.responseEmbed = embed;
+		return this;
 	}
 
 	public CommandResponse setDeletionDelay(long delay, TimeUnit unit){
@@ -49,15 +50,18 @@ public class CommandResponse {
 	}
 
 	public void sendResponse(TextChannel channel){
-		Message responseMessage;
-		if (response != null){
-			responseMessage = channel.sendMessage(":" + emoji + ": " + response).complete();
-		} else {
-			responseMessage = channel.sendMessage(embedResponse).complete();
+		Message responseMessage = channel.sendMessage(":" + emoji + ": " + response).complete();
+
+		Message embedResponseMessage = null;
+		if (responseEmbed != null){
+			embedResponseMessage = channel.sendMessage(responseEmbed).complete();
 		}
 
 		if ((deletionDelay != 0) && (deletionDelayUnit != null)){
 			Scheduler.schedule(new MessageDeleteTask(responseMessage), deletionDelay, deletionDelayUnit);
+			if (embedResponseMessage != null){
+				Scheduler.schedule(new MessageDeleteTask(embedResponseMessage), deletionDelay, deletionDelayUnit);
+			}
 		}
 	}
 }
