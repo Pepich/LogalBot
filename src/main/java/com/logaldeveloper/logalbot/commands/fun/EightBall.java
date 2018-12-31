@@ -19,6 +19,7 @@ package com.logaldeveloper.logalbot.commands.fun;
 
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
+import com.logaldeveloper.logalbot.utils.StringUtil;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -62,7 +63,7 @@ public class EightBall implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry, " + executor.getAsMention() + ", but you need to supply a question for the Magic 8 Ball.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		String question = String.join(" ", arguments).replaceAll("`", "'");
+		String question = StringUtil.sanatizeCodeBlock(String.join(" ", arguments));
 
 		return new CommandResponse("question", executor.getAsMention() + " asked the Magic 8 Ball: `" + question + "`\n:8ball: The Magic 8 Ball responds: *" + responses.get(rng.nextInt(responses.size())) + "*.");
 	}

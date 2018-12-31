@@ -21,10 +21,7 @@ import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
-import com.logaldeveloper.logalbot.utils.AudioUtil;
-import com.logaldeveloper.logalbot.utils.EmojiUtil;
-import com.logaldeveloper.logalbot.utils.TimeUtil;
-import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
+import com.logaldeveloper.logalbot.utils.*;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -51,7 +48,7 @@ public class Queue implements Command {
 		for (int i = 0; i < 11; i++){
 			try{
 				TrackScheduler.getQueue().get(i); // Attempt to trigger an IndexOutOfBoundsException before we append to the string, otherwise we could get an incomplete track line added.
-				reply.append(EmojiUtil.intToEmoji(i + 1)).append(" **").append(TrackScheduler.getQueue().get(i).getInfo().title).append("** (").append(TimeUtil.formatTime(TrackScheduler.getQueue().get(i).getDuration())).append(")\n");
+				reply.append(EmojiUtil.intToEmoji(i + 1)).append(" **").append(StringUtil.sanatize(TrackScheduler.getQueue().get(i).getInfo().title)).append("** (").append(TimeUtil.formatTime(TrackScheduler.getQueue().get(i).getDuration())).append(")\n");
 				time += TrackScheduler.getQueue().get(i).getInfo().length;
 			} catch (IndexOutOfBoundsException exception){
 				break;

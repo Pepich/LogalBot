@@ -20,6 +20,7 @@ package com.logaldeveloper.logalbot.audio;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.EmojiUtil;
+import com.logaldeveloper.logalbot.utils.StringUtil;
 import com.logaldeveloper.logalbot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -64,7 +65,7 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 			return;
 		}
 
-		channel.sendMessage(":notes: " + requester.getAsMention() + " added **" + track.getInfo().title + "** to the queue. (" + TimeUtil.formatTime(track.getInfo().length) + ")").queue();
+		channel.sendMessage(":notes: " + requester.getAsMention() + " added **" + StringUtil.sanatize(track.getInfo().title) + "** to the queue. (" + TimeUtil.formatTime(track.getInfo().length) + ")").queue();
 		TrackScheduler.addToQueue(track, requester);
 	}
 
@@ -96,11 +97,11 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 			}
 
 			if (PermissionManager.isWhitelisted(requester)){
-				channel.sendMessage(":notes: " + requester.getAsMention() + " added **" + track.getInfo().title + "** to the queue. (" + TimeUtil.formatTime(track.getInfo().length) + ")").queue();
+				channel.sendMessage(":notes: " + requester.getAsMention() + " added **" + StringUtil.sanatize(track.getInfo().title) + "** to the queue. (" + TimeUtil.formatTime(track.getInfo().length) + ")").queue();
 				TrackScheduler.addToQueue(track, requester);
 			} else {
 				if (!(track.getInfo().length <= 60000) && !(track.getInfo().length >= 900000)){
-					channel.sendMessage(":notes: " + requester.getAsMention() + " added **" + track.getInfo().title + "** to the queue. (" + TimeUtil.formatTime(track.getInfo().length) + ")").queue();
+					channel.sendMessage(":notes: " + requester.getAsMention() + " added **" + StringUtil.sanatize(track.getInfo().title) + "** to the queue. (" + TimeUtil.formatTime(track.getInfo().length) + ")").queue();
 					TrackScheduler.addToQueue(track, requester);
 				} else {
 					channel.sendMessage(":no_entry_sign: Sorry " + requester.getAsMention() + ", but you are not allowed to add tracks less than 1 minute or greater than 15 minutes in length.").queue();
@@ -128,9 +129,9 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 					try{
 						addedTracks.get(i); // Attempt to trigger an IndexOutOfBoundsException before we append to the string, otherwise we could get an incomplete track line added.
 						if (shouldCountByZero){
-							reply.append(EmojiUtil.intToEmoji(i)).append(" **").append(addedTracks.get(i).getInfo().title).append("** (").append(TimeUtil.formatTime(addedTracks.get(i).getDuration())).append(")\n");
+							reply.append(EmojiUtil.intToEmoji(i)).append(" **").append(StringUtil.sanatize(addedTracks.get(i).getInfo().title)).append("** (").append(TimeUtil.formatTime(addedTracks.get(i).getDuration())).append(")\n");
 						} else {
-							reply.append(EmojiUtil.intToEmoji(i + 1)).append(" **").append(addedTracks.get(i).getInfo().title).append("** (").append(TimeUtil.formatTime(addedTracks.get(i).getDuration())).append(")\n");
+							reply.append(EmojiUtil.intToEmoji(i + 1)).append(" **").append(StringUtil.sanatize(addedTracks.get(i).getInfo().title)).append("** (").append(TimeUtil.formatTime(addedTracks.get(i).getDuration())).append(")\n");
 						}
 					} catch (IndexOutOfBoundsException exception){
 						break;

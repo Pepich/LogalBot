@@ -22,6 +22,7 @@ import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
+import com.logaldeveloper.logalbot.utils.StringUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -53,7 +54,7 @@ public class Remove implements Command {
 		try{
 			AudioTrack trackToBeRemoved = TrackScheduler.getQueue().get(index - 1);
 			TrackScheduler.removeFromQueue(index - 1);
-			return new CommandResponse("scissors", executor.getAsMention() + " removed **" + trackToBeRemoved.getInfo().title + "** from the queue.");
+			return new CommandResponse("scissors", executor.getAsMention() + " removed **" + StringUtil.sanatize(trackToBeRemoved.getInfo().title) + "** from the queue.");
 		} catch (IndexOutOfBoundsException exception){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but that index is outside the bounds of the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
