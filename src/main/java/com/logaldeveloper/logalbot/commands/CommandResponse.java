@@ -19,6 +19,7 @@ package com.logaldeveloper.logalbot.commands;
 
 import com.logaldeveloper.logalbot.tasks.MessageDeleteTask;
 import com.logaldeveloper.logalbot.utils.Scheduler;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -50,18 +51,17 @@ public class CommandResponse {
 	}
 
 	public void sendResponse(TextChannel channel){
-		Message responseMessage = channel.sendMessage(":" + emoji + ": " + response).complete();
+		MessageBuilder builder = new MessageBuilder();
+		builder.setContent(":" + emoji + ": " + response);
 
-		Message embedResponseMessage = null;
-		if (responseEmbed != null){
-			embedResponseMessage = channel.sendMessage(responseEmbed).complete();
+		if (this.responseEmbed != null){
+			builder.setEmbed(this.responseEmbed);
 		}
+
+		Message responseMessage = channel.sendMessage(builder.build()).complete();
 
 		if ((deletionDelay != 0) && (deletionDelayUnit != null)){
 			Scheduler.schedule(new MessageDeleteTask(responseMessage), deletionDelay, deletionDelayUnit);
-			if (embedResponseMessage != null){
-				Scheduler.schedule(new MessageDeleteTask(embedResponseMessage), deletionDelay, deletionDelayUnit);
-			}
 		}
 	}
 }
