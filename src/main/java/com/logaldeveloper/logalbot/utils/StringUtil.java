@@ -19,10 +19,10 @@ package com.logaldeveloper.logalbot.utils;
 
 public class StringUtil {
 	public static String sanatize(String string){
-		return string.replaceAll("([_*`<@>~])", "\\\\$1");
+		return string.replaceAll("([_*`<@>~])", "\\\\$1").replaceAll("[\r\n]", "");
 	}
 
 	public static String sanatizeCodeBlock(String string){
-		return string.replaceAll("`", "'");
+		return string.replaceAll("[`]", "'").replaceAll("[\r\n]", "");
 	}
 }
