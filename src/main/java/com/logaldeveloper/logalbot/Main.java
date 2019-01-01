@@ -24,6 +24,7 @@ import com.logaldeveloper.logalbot.commands.fun.EightBall;
 import com.logaldeveloper.logalbot.commands.general.About;
 import com.logaldeveloper.logalbot.commands.general.Help;
 import com.logaldeveloper.logalbot.events.GuildMessageReceived;
+import com.logaldeveloper.logalbot.events.GuildReady;
 import com.logaldeveloper.logalbot.events.GuildVoiceLeave;
 import com.logaldeveloper.logalbot.events.GuildVoiceMove;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
@@ -54,6 +55,7 @@ public class Main {
 			jdaBuilder.setAutoReconnect(true);
 			jdaBuilder.setAudioEnabled(true);
 			jdaBuilder.setToken(token);
+			jdaBuilder.addEventListener(new GuildReady());
 			jda = jdaBuilder.buildBlocking();
 		} catch (LoginException exception){
 			logger.error("The token specified is not valid.");
