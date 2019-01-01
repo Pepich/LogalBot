@@ -56,7 +56,7 @@ public class Main {
 			jdaBuilder.setAudioEnabled(true);
 			jdaBuilder.setToken(token);
 			jdaBuilder.addEventListener(new GuildReady());
-			jda = jdaBuilder.buildBlocking();
+			jda = jdaBuilder.build().awaitReady();
 		} catch (LoginException exception){
 			logger.error("The token specified is not valid.");
 			System.exit(1);
