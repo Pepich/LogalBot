@@ -17,7 +17,6 @@
 
 package com.logaldeveloper.logalbot.commands.audio;
 
-import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
@@ -34,10 +33,6 @@ import java.util.concurrent.TimeUnit;
 public final class Play implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
-		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
-		}
-
 		Guild guild = channel.getGuild();
 		if (AudioUtil.getTrackScheduler(guild).isQueueLocked() && !PermissionManager.isWhitelisted(executor, guild)){
 			return new CommandResponse("lock", "Sorry " + executor.getAsMention() + ", but the queue is locked.").setDeletionDelay(10, TimeUnit.SECONDS);

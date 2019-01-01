@@ -17,7 +17,6 @@
 
 package com.logaldeveloper.logalbot.commands.audio;
 
-import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
@@ -32,10 +31,6 @@ import java.util.concurrent.TimeUnit;
 public final class Remove implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
-		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
-		}
-
 		if (arguments.length == 0){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must provide an index.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}

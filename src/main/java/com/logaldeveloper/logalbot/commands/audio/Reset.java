@@ -17,7 +17,6 @@
 
 package com.logaldeveloper.logalbot.commands.audio;
 
-import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
@@ -31,10 +30,6 @@ import java.util.concurrent.TimeUnit;
 public final class Reset implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
-		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
-		}
-
 		Guild guild = channel.getGuild();
 		if (AudioUtil.isTrackLoaded(guild) && !VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel(guild).getName() + "` in order to reset the audio player.").setDeletionDelay(10, TimeUnit.SECONDS);

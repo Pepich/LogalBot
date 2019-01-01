@@ -17,7 +17,6 @@
 
 package com.logaldeveloper.logalbot.commands.audio;
 
-import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
@@ -25,15 +24,9 @@ import com.logaldeveloper.logalbot.utils.AudioUtil;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
-import java.util.concurrent.TimeUnit;
-
 public final class Lock implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
-		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
-		}
-
 		TrackScheduler scheduler = AudioUtil.getTrackScheduler(channel.getGuild());
 		if (scheduler.isQueueLocked()){
 			scheduler.setQueueLocked(false);

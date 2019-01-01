@@ -17,7 +17,6 @@
 
 package com.logaldeveloper.logalbot.utils;
 
-import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.audio.AudioPlayerSendHandler;
 import com.logaldeveloper.logalbot.audio.TrackLoadHandler;
 import com.logaldeveloper.logalbot.audio.TrackScheduler;
@@ -122,10 +121,6 @@ public final class AudioUtil {
 	public static void setVolume(Guild guild, int volume){
 		logger.info("The audio player's volume was set to " + volume + "%.");
 		players.get(guild.getId()).setVolume(volume);
-	}
-
-	public static boolean isAllowedChannelForAudioCommands(TextChannel channel){
-		return channel.getName().equals(Main.getTextChannelNameForAudioCommands());
 	}
 
 	public static void findTrack(String query, User requester, TextChannel channel){

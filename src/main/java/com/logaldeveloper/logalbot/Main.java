@@ -40,7 +40,6 @@ import javax.security.auth.login.LoginException;
 public final class Main {
 	private static final String token = System.getenv("TOKEN");
 	private static final String ownerUserID = System.getenv("OWNER_USER_ID");
-	private static final String textChannelNameForAudioCommands = System.getenv("AUDIO_COMMANDS_TEXT_CHANNEL");
 
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	private static JDA jda;
@@ -108,10 +107,6 @@ public final class Main {
 		logger.info("Everything seems to be ready! Enabling command listener...");
 		jda.addEventListener(new GuildMessageReceived());
 		logger.info("Initialization complete!");
-	}
-
-	public static String getTextChannelNameForAudioCommands(){
-		return textChannelNameForAudioCommands;
 	}
 
 	public static User getOwner(){
