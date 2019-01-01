@@ -17,7 +17,6 @@
 
 package com.logaldeveloper.logalbot.audio;
 
-import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.CommandManager;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
 import com.logaldeveloper.logalbot.tasks.IdleLogoutTask;
@@ -28,7 +27,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,32 +37,37 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class TrackScheduler extends AudioEventAdapter {
-	private static final ArrayList<AudioTrack> queue = new ArrayList<>();
-	private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
-	private static boolean queueLocked = false;
-	private static ScheduledFuture idleLogoutTask;
+	private final Guild guild;
+	private final ArrayList<AudioTrack> queue = new ArrayList<>();
+	private final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
+	private boolean queueLocked = false;
+	private ScheduledFuture idleLogoutTask;
+
+	public TrackScheduler(Guild guild){
+		this.guild = guild;
+	}
 
 	@SuppressWarnings("ConstantConditions")
-	static void addToQueue(AudioTrack track, User requester){
-		if (queueLocked && !PermissionManager.isWhitelisted(requester)){
+	public void addToQueue(AudioTrack track, User requester){
+		if (queueLocked && !PermissionManager.isWhitelisted(requester, guild)){
 			return;
 		}
 
-		if (TrackScheduler.isQueueFull()){
+		if (isQueueFull()){
 			return;
 		}
 
-		logger.info("'" + requester.getName() + "' added '" + track.getInfo().title + "' to the queue.");
-		queue.add(track);
-		if (!AudioUtil.isTrackLoaded()){
+		this.logger.info("'" + requester.getName() + "' added '" + track.getInfo().title + "' to the queue.");
+		this.queue.add(track);
+		if (!AudioUtil.isTrackLoaded(guild)){
 			// The inspector is suppressed here because the play command checks if the executor is in a voice channel before addToQueue is called.
-			VoiceChannelUtil.joinVoiceChannel(VoiceChannelUtil.getCurrentVoiceChannelFromUser(requester));
-			AudioUtil.playTrack(queue.get(0));
+			VoiceChannelUtil.joinVoiceChannel(VoiceChannelUtil.getCurrentVoiceChannelFromUser(guild, requester));
+			AudioUtil.playTrack(guild, queue.get(0));
 			queue.remove(0);
 		}
 	}
 
-	static boolean isQueued(AudioTrack track){
+	public boolean isQueued(AudioTrack track){
 		for (AudioTrack queuedTrack : queue){
 			if (track.getInfo().identifier.equals(queuedTrack.getInfo().identifier)){
 				return true;
@@ -72,46 +76,45 @@ public class TrackScheduler extends AudioEventAdapter {
 		return false;
 	}
 
-	static boolean isQueueFull(){
+	public boolean isQueueFull(){
 		return queue.size() >= 10;
 	}
 
-	public static boolean isQueueEmpty(){
+	public boolean isQueueEmpty(){
 		return queue.size() == 0;
 	}
 
-	public static boolean isQueueLocked(){
+	public boolean isQueueLocked(){
 		return queueLocked;
 	}
 
-	public static void setQueueLocked(boolean locked){
+	public void setQueueLocked(boolean locked){
 		queueLocked = locked;
 	}
 
-	public static void clearQueue(){
+	public void clearQueue(){
 		queue.clear();
 	}
 
-	public static ArrayList<AudioTrack> getQueue(){
+	public ArrayList<AudioTrack> getQueue(){
 		return queue;
 	}
 
-	public static void removeFromQueue(int index){
+	public void removeFromQueue(int index){
 		logger.info("Track '" + queue.get(index).getInfo().title + "' has been removed from the queue.");
 		queue.remove(index);
 	}
 
-	public static void skipCurrentTrack(){
-		if (AudioUtil.isTrackLoaded()){
-			logger.info("Track '" + AudioUtil.getLoadedTrack().getInfo().title + "' has been skipped.");
-			AudioUtil.stopTrack();
+	public void skipCurrentTrack(){
+		if (AudioUtil.isTrackLoaded(guild)){
+			logger.info("Track '" + AudioUtil.getLoadedTrack(guild).getInfo().title + "' has been skipped.");
+			AudioUtil.stopTrack(guild);
 		}
 	}
 
 	@Override
 	public void onTrackStart(AudioPlayer player, AudioTrack track){
 		logger.info("Track '" + track.getInfo().title + "' has started.");
-		Main.getJDA().getPresence().setGame(Game.listening(track.getInfo().title));
 		CommandManager.reinitializeCommand("skip");
 		if (idleLogoutTask != null && !idleLogoutTask.isDone()){
 			logger.info("A track has started. Cancelling scheduled disconnect.");
@@ -125,15 +128,14 @@ public class TrackScheduler extends AudioEventAdapter {
 		System.gc();
 		logger.info("Track '" + track.getInfo().title + "' has stopped.");
 		if ((endReason.mayStartNext || endReason == AudioTrackEndReason.STOPPED) && queue.size() >= 1){
-			AudioUtil.playTrack(queue.get(0));
+			AudioUtil.playTrack(guild, queue.get(0));
 			queue.remove(0);
 		} else {
 			CommandManager.reinitializeCommand("volume");
 			CommandManager.reinitializeCommand("lock");
 			CommandManager.reinitializeCommand("pause");
-			Main.getJDA().getPresence().setGame(null);
-			logger.info("Disconnecting from voice channel '" + VoiceChannelUtil.getCurrentVoiceChannel().getName() + "' in 1 minute...");
-			idleLogoutTask = Scheduler.schedule(new IdleLogoutTask(), 1, TimeUnit.MINUTES);
+			logger.info("Disconnecting from voice channel '" + VoiceChannelUtil.getCurrentVoiceChannel(guild).getName() + "' in 1 minute...");
+			idleLogoutTask = Scheduler.schedule(new IdleLogoutTask(guild), 1, TimeUnit.MINUTES);
 		}
 		CommandManager.reinitializeCommand("skip");
 	}

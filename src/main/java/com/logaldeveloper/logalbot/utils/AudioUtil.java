@@ -26,6 +26,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -33,85 +34,100 @@ import net.dv8tion.jda.core.managers.AudioManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+
 public class AudioUtil {
 	private static final Logger logger = LoggerFactory.getLogger(AudioUtil.class);
-	private static AudioPlayerManager playerManager;
-	private static AudioPlayer player;
-	private static AudioManager audioManager;
 
-	public static void initialize(){
-		playerManager = new DefaultAudioPlayerManager();
+	private static final AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+	private static final HashMap<String, AudioPlayer> players = new HashMap<>();
+	private static final HashMap<String, TrackScheduler> schedulers = new HashMap<>();
+
+	public static void initializePlayerManager(){
 		AudioSourceManagers.registerRemoteSources(playerManager);
-		player = playerManager.createPlayer();
-		audioManager = Main.getGuild().getAudioManager();
-		audioManager.setSelfDeafened(true);
-		player.addListener(new TrackScheduler());
-		logger.info("Audio environment ready!");
 	}
 
-	public static VoiceChannel getCurrentVoiceChannel(){
-		return audioManager.getConnectedChannel();
+	public static void initialize(Guild guild){
+		players.put(guild.getId(), playerManager.createPlayer());
+		guild.getAudioManager().setSelfDeafened(true);
+		schedulers.put(guild.getId(), new TrackScheduler(guild));
+		players.get(guild.getId()).addListener(schedulers.get(guild.getId()));
+		logger.info("Audio environment initialized for guild ID " + guild.getId() + ".");
 	}
 
-	static void closeAudioConnection(){
-		audioManager.closeAudioConnection();
+	public static boolean isInitialized(Guild guild){
+		return ((players.get(guild.getId()) != null) && (schedulers.get(guild.getId()) != null));
+	}
+
+	public static VoiceChannel getCurrentVoiceChannel(Guild guild){
+		return guild.getAudioManager().getConnectedChannel();
+	}
+
+	static void closeAudioConnection(Guild guild){
+		guild.getAudioManager().closeAudioConnection();
 	}
 
 	static void openAudioConnection(VoiceChannel channel){
-		audioManager.setSendingHandler(new AudioPlayerSendHandler(player));
+		Guild guild = channel.getGuild();
+		AudioManager audioManager = guild.getAudioManager();
+
+		audioManager.setSendingHandler(new AudioPlayerSendHandler(players.get(guild.getId())));
 		audioManager.openAudioConnection(channel);
 		audioManager.setSelfDeafened(true);
 	}
 
-	static boolean isAudioConnectionOpen(){
-		return audioManager.isConnected();
+	public static boolean isAudioConnectionOpen(Guild guild){
+		return guild.getAudioManager().isConnected();
 	}
 
-	public static boolean isTrackLoaded(){
-		return !(player.getPlayingTrack() == null);
+	public static boolean isTrackLoaded(Guild guild){
+		return !(getLoadedTrack(guild) == null);
 	}
 
-	public static AudioTrack getLoadedTrack(){
-		return player.getPlayingTrack();
+	public static AudioTrack getLoadedTrack(Guild guild){
+		return players.get(guild.getId()).getPlayingTrack();
 	}
 
-	public static boolean isPlayerPaused(){
-		return player.isPaused();
+	public static boolean isPlayerPaused(Guild guild){
+		return players.get(guild.getId()).isPaused();
 	}
 
-	public static void setPausedState(boolean pausedState){
+	public static void setPausedState(Guild guild, boolean pausedState){
 		if (pausedState){
 			logger.info("The audio player was paused.");
 		} else {
 			logger.info("The audio player was resumed.");
 		}
 
-		player.setPaused(pausedState);
+		players.get(guild.getId()).setPaused(pausedState);
 	}
 
-	public static int getVolume(){
-		return player.getVolume();
+	public static int getVolume(Guild guild){
+		return players.get(guild.getId()).getVolume();
 	}
 
-	public static void setVolume(int volume){
+	public static void setVolume(Guild guild, int volume){
 		logger.info("The audio player's volume was set to " + volume + "%.");
-		player.setVolume(volume);
+		players.get(guild.getId()).setVolume(volume);
 	}
 
-	public static void playTrack(AudioTrack track){
-		player.playTrack(track);
+	public static void playTrack(Guild guild, AudioTrack track){
+		players.get(guild.getId()).playTrack(track);
 	}
 
-	public static void stopTrack(){
-		player.stopTrack();
+	public static void stopTrack(Guild guild){
+		players.get(guild.getId()).stopTrack();
 	}
 
-	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public static boolean isAllowedChannelForAudioCommands(TextChannel channel){
 		return channel.getName().equals(Main.getTextChannelNameForAudioCommands());
 	}
 
 	public static void findTrack(String query, User requester, TextChannel channel){
 		playerManager.loadItem(query, new TrackLoadHandler(requester, channel));
+	}
+
+	public static TrackScheduler getTrackScheduler(Guild guild){
+		return schedulers.get(guild.getId());
 	}
 }

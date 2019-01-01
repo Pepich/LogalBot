@@ -30,7 +30,6 @@ import com.logaldeveloper.logalbot.utils.AudioUtil;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +39,9 @@ import javax.security.auth.login.LoginException;
 public class Main {
 	private static final String token = System.getenv("TOKEN");
 	private static final String ownerUserID = System.getenv("OWNER_USER_ID");
-	private static final String guildName = System.getenv("GUILD_NAME");
 	private static final String textChannelNameForAudioCommands = System.getenv("AUDIO_COMMANDS_TEXT_CHANNEL");
 
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
-	private static Guild guild;
 	private static JDA jda;
 	private static User owner;
 
@@ -68,26 +65,16 @@ public class Main {
 		}
 		logger.info("Successfully logged into Discord as bot user '" + jda.getSelfUser().getName() + "'.");
 
-		logger.info("Attempting to find guild with name '" + guildName + "'...");
-		guild = jda.getGuildsByName(guildName, false).get(0);
-		if (guild == null){
-			logger.error("Unable to find guild! Either this bot user is not a member of the specified guild, or the guild name is invalid!");
-			System.exit(1);
-		}
-		logger.info("Guild is '" + guild.getName() + "'.");
-
 		logger.info("Attempting to find owner user with user ID '" + ownerUserID + "'...");
 		owner = jda.getUserById(ownerUserID);
 		if (owner == null){
-			logger.error("Unable to find owner user! Either the owner is not a member of guild '" + guild.getName() + "', or the user ID specified is invalid!");
+			logger.error("Unable to find owner user! Either the owner is not a member of any guild the bot is a member of, or the user ID specified is invalid!");
 			System.exit(1);
 		}
 		logger.info("Owner is '" + owner.getName() + "'.");
 
 		logger.info("Beginning initialization of LogalBot...");
-
-		logger.info("Setting up audio player...");
-		AudioUtil.initialize();
+		AudioUtil.initializePlayerManager();
 
 		logger.info("Registering events...");
 		jda.addEventListener(new GuildVoiceLeave());
@@ -125,15 +112,7 @@ public class Main {
 		return textChannelNameForAudioCommands;
 	}
 
-	public static JDA getJDA(){
-		return jda;
-	}
-
 	public static User getOwner(){
 		return owner;
-	}
-
-	public static Guild getGuild(){
-		return guild;
 	}
 }

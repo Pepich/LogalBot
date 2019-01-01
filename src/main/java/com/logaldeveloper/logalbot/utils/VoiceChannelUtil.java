@@ -17,60 +17,49 @@
 
 package com.logaldeveloper.logalbot.utils;
 
-import com.logaldeveloper.logalbot.Main;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-
 public class VoiceChannelUtil {
 	private static final Logger logger = LoggerFactory.getLogger(VoiceChannelUtil.class);
 
-	private static ArrayList<String> getChannelMembersAsIDs(VoiceChannel channel){
-		ArrayList<String> members = new ArrayList<>();
-		for (Member member : channel.getMembers()){
-			members.add(member.getUser().getId());
-		}
-		return members;
-	}
-
-	public static VoiceChannel getCurrentVoiceChannelFromUser(User user){
-		for (VoiceChannel channel : Main.getGuild().getVoiceChannels()){
-			if (VoiceChannelUtil.getChannelMembersAsIDs(channel).contains(user.getId())){
+	public static VoiceChannel getCurrentVoiceChannelFromUser(Guild guild, User user){
+		for (VoiceChannel channel : guild.getVoiceChannels()){
+			if (channel.getMembers().contains(guild.getMember(user))){
 				return channel;
 			}
 		}
 		return null;
 	}
 
-	public static VoiceChannel getCurrentVoiceChannel(){
-		return AudioUtil.getCurrentVoiceChannel();
+	public static VoiceChannel getCurrentVoiceChannel(Guild guild){
+		return AudioUtil.getCurrentVoiceChannel(guild);
 	}
 
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-	public static boolean isInCurrentVoiceChannel(User user){
-		return VoiceChannelUtil.getChannelMembersAsIDs(VoiceChannelUtil.getCurrentVoiceChannel()).contains(user.getId());
+	public static boolean isInCurrentVoiceChannel(Guild guild, User user){
+		return VoiceChannelUtil.getCurrentVoiceChannel(guild).getMembers().contains(guild.getMember(user));
 	}
 
 	public static void joinVoiceChannel(VoiceChannel channel){
-		if (!channel.equals(getCurrentVoiceChannel())){
-			VoiceChannelUtil.leaveCurrentVoiceChannel();
+		if (!channel.equals(getCurrentVoiceChannel(channel.getGuild()))){
+			VoiceChannelUtil.leaveCurrentVoiceChannel(channel.getGuild());
 			logger.info("Connecting to voice channel '" + channel.getName() + "'.");
 			AudioUtil.openAudioConnection(channel);
 		}
 	}
 
-	public static void leaveCurrentVoiceChannel(){
-		if (VoiceChannelUtil.isConnectedToVoiceChannel()){
-			logger.info("Disconnecting from voice channel '" + VoiceChannelUtil.getCurrentVoiceChannel().getName() + "'.");
-			AudioUtil.closeAudioConnection();
+	public static void leaveCurrentVoiceChannel(Guild guild){
+		if (VoiceChannelUtil.isConnectedToVoiceChannel(guild)){
+			logger.info("Disconnecting from voice channel '" + VoiceChannelUtil.getCurrentVoiceChannel(guild).getName() + "'.");
+			AudioUtil.closeAudioConnection(guild);
 		}
 	}
 
-	public static boolean isConnectedToVoiceChannel(){
-		return AudioUtil.isAudioConnectionOpen();
+	public static boolean isConnectedToVoiceChannel(Guild guild){
+		return AudioUtil.isAudioConnectionOpen(guild);
 	}
 }

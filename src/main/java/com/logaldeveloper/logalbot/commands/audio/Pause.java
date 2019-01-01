@@ -22,6 +22,7 @@ import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -30,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 public class Pause implements Command {
 	@Override
 	public void initialize(){
-		AudioUtil.setPausedState(false);
 	}
 
 	@Override
@@ -39,19 +39,20 @@ public class Pause implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (!AudioUtil.isTrackLoaded()){
+		Guild guild = channel.getGuild();
+		if (!AudioUtil.isTrackLoaded(guild)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to pause or resume the player.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (!VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel().getName() + "` in order to pause or unplause the player.").setDeletionDelay(10, TimeUnit.SECONDS);
+		if (!VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(guild).getName() + "` in order to pause or unplause the player.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (AudioUtil.isPlayerPaused()){
-			AudioUtil.setPausedState(false);
+		if (AudioUtil.isPlayerPaused(guild)){
+			AudioUtil.setPausedState(guild, false);
 			return new CommandResponse("arrow_forward", executor.getAsMention() + " resumed the track player.");
 		} else {
-			AudioUtil.setPausedState(true);
+			AudioUtil.setPausedState(guild, true);
 			return new CommandResponse("pause_button", executor.getAsMention() + " paused the track player.");
 		}
 	}

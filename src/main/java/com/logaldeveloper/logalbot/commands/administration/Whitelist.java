@@ -21,6 +21,7 @@ import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -29,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 public class Whitelist implements Command {
 	@Override
 	public void initialize(){
-		PermissionManager.addToWhitelist(Main.getOwner());
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class Whitelist implements Command {
 		String userID = arguments[0].replaceFirst("<@[!]?([0-9]*)>", "$1");
 		User user;
 		try{
-			user = Main.getJDA().getUserById(userID);
+			user = channel.getJDA().getUserById(userID);
 		} catch (Throwable exception){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but that doesn't appear to be a valid user.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
@@ -62,11 +62,12 @@ public class Whitelist implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you cannot whitelist bots.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (PermissionManager.isWhitelisted(user)){
-			PermissionManager.removeFromWhitelist(user);
+		Guild guild = channel.getGuild();
+		if (PermissionManager.isWhitelisted(user, guild)){
+			PermissionManager.removeFromWhitelist(user, guild);
 			return new CommandResponse("heavy_multiplication_x", executor.getAsMention() + " has removed " + user.getAsMention() + " from the whitelist.");
 		} else {
-			PermissionManager.addToWhitelist(user);
+			PermissionManager.addToWhitelist(user, guild);
 			return new CommandResponse("heavy_check_mark", executor.getAsMention() + " has added " + user.getAsMention() + " to the whitelist.");
 		}
 	}

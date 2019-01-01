@@ -18,7 +18,6 @@
 package com.logaldeveloper.logalbot.commands.audio;
 
 import com.logaldeveloper.logalbot.Main;
-import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
@@ -45,24 +44,24 @@ public class Skip implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (!AudioUtil.isTrackLoaded()){
+		if (!AudioUtil.isTrackLoaded(channel.getGuild())){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to vote to skip it.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (!VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel().getName() + "` in order to vote to skip tracks.").setDeletionDelay(10, TimeUnit.SECONDS);
+		if (!VoiceChannelUtil.isInCurrentVoiceChannel(channel.getGuild(), executor)){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(channel.getGuild()).getName() + "` in order to vote to skip tracks.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (skipVotes.contains(executor.getId())){
 			return new CommandResponse("no_entry_sign", "You have already voted to skip this track " + executor.getAsMention() + ".").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		int listeners = (int) VoiceChannelUtil.getCurrentVoiceChannel().getMembers().stream().filter(member -> !member.getUser().isBot()).count();
+		int listeners = (int) VoiceChannelUtil.getCurrentVoiceChannel(channel.getGuild()).getMembers().stream().filter(member -> !member.getUser().isBot()).count();
 		int required = (int) Math.ceil(listeners * .55);
 		skipVotes.add(executor.getId());
 		if (skipVotes.size() >= required){
-			AudioTrack skippedTrack = AudioUtil.getLoadedTrack();
-			TrackScheduler.skipCurrentTrack();
+			AudioTrack skippedTrack = AudioUtil.getLoadedTrack(channel.getGuild());
+			AudioUtil.getTrackScheduler(channel.getGuild()).skipCurrentTrack();
 			CommandResponse response = new CommandResponse("gun", "The following track has been skipped:");
 			response.attachEmbed(TrackUtil.generateTrackInfoEmbed(skippedTrack));
 			return response;

@@ -21,6 +21,7 @@ import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -29,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 public class Volume implements Command {
 	@Override
 	public void initialize(){
-		AudioUtil.setVolume(10);
 	}
 
 	@Override
@@ -38,11 +38,12 @@ public class Volume implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
+		Guild guild = channel.getGuild();
 		if (arguments.length == 0){
-			if (AudioUtil.getVolume() >= 75){
-				return new CommandResponse("loud_sound", executor.getAsMention() + ", the volume is currently set to `" + AudioUtil.getVolume() + "%`.");
+			if (AudioUtil.getVolume(guild) >= 75){
+				return new CommandResponse("loud_sound", executor.getAsMention() + ", the volume is currently set to `" + AudioUtil.getVolume(guild) + "%`.");
 			} else {
-				return new CommandResponse("sound", executor.getAsMention() + ", the volume is currently set to `" + AudioUtil.getVolume() + "%`.");
+				return new CommandResponse("sound", executor.getAsMention() + ", the volume is currently set to `" + AudioUtil.getVolume(guild) + "%`.");
 			}
 		}
 
@@ -54,8 +55,8 @@ public class Volume implements Command {
 		}
 
 		if (volume <= 150 && volume >= 1){
-			int oldVolume = AudioUtil.getVolume();
-			AudioUtil.setVolume(volume);
+			int oldVolume = AudioUtil.getVolume(guild);
+			AudioUtil.setVolume(guild, volume);
 			if (volume >= 75){
 				return new CommandResponse("loud_sound", executor.getAsMention() + " set the volume from `" + oldVolume + "%` to `" + volume + "%`.");
 			} else {

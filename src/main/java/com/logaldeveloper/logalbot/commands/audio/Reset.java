@@ -18,11 +18,11 @@
 package com.logaldeveloper.logalbot.commands.audio;
 
 import com.logaldeveloper.logalbot.Main;
-import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -39,13 +39,14 @@ public class Reset implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (AudioUtil.isTrackLoaded() && !VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel().getName() + "` in order to reset the audio player.").setDeletionDelay(10, TimeUnit.SECONDS);
+		Guild guild = channel.getGuild();
+		if (AudioUtil.isTrackLoaded(guild) && !VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel(guild).getName() + "` in order to reset the audio player.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		TrackScheduler.clearQueue();
-		if (AudioUtil.isTrackLoaded()){
-			AudioUtil.stopTrack();
+		AudioUtil.getTrackScheduler(guild).clearQueue();
+		if (AudioUtil.isTrackLoaded(guild)){
+			AudioUtil.stopTrack(guild);
 		}
 
 		return new CommandResponse("recycle", executor.getAsMention() + " has stopped the current track and reset the queue.");

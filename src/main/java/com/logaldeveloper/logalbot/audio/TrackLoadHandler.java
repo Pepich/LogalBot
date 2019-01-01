@@ -19,11 +19,13 @@ package com.logaldeveloper.logalbot.audio;
 
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
+import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.TrackUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
@@ -45,8 +47,10 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 	@Override
 	public void trackLoaded(AudioTrack track){
 		CommandResponse response;
+		Guild guild = channel.getGuild();
+		TrackScheduler scheduler = AudioUtil.getTrackScheduler(guild);
 
-		if (TrackScheduler.isQueueFull()){
+		if (scheduler.isQueueFull()){
 			response = new CommandResponse("card_box", "Sorry " + requester.getAsMention() + ", but the queue is full.").setDeletionDelay(10, TimeUnit.SECONDS);
 			response.sendResponse(channel);
 			return;
@@ -58,30 +62,31 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 			return;
 		}
 
-		if ((track.getInfo().length <= 60000 || track.getInfo().length >= 900000) && !PermissionManager.isWhitelisted(requester)){
+		if ((track.getInfo().length <= 60000 || track.getInfo().length >= 900000) && !PermissionManager.isWhitelisted(requester, guild)){
 			response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but you can only add tracks between 1 and 15 minutes in length.").setDeletionDelay(10, TimeUnit.SECONDS);
 			response.sendResponse(channel);
 			return;
 		}
 
-		if (TrackScheduler.isQueued(track)){
+		if (scheduler.isQueued(track)){
 			response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but that track is already queued.").setDeletionDelay(10, TimeUnit.SECONDS);
 			response.sendResponse(channel);
 			return;
 		}
 
-		TrackScheduler.addToQueue(track, requester);
+		scheduler.addToQueue(track, requester);
 		response = new CommandResponse("notes", requester.getAsMention() + " added the following track to the queue:");
 		response.attachEmbed(TrackUtil.generateTrackInfoEmbed(track));
 		response.sendResponse(channel);
 	}
 
-	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@Override
 	public void playlistLoaded(AudioPlaylist playlist){
 		CommandResponse response;
+		Guild guild = channel.getGuild();
+		TrackScheduler scheduler = AudioUtil.getTrackScheduler(guild);
 
-		if (TrackScheduler.isQueueFull()){
+		if (scheduler.isQueueFull()){
 			response = new CommandResponse("card_box", "Sorry " + requester.getAsMention() + ", but the queue is full.").setDeletionDelay(10, TimeUnit.SECONDS);
 			response.sendResponse(channel);
 			return;
@@ -96,7 +101,7 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 		}
 
 		if (track != null){
-			if (TrackScheduler.isQueued(track)){
+			if (scheduler.isQueued(track)){
 				response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but that track is already queued.").setDeletionDelay(10, TimeUnit.SECONDS);
 				response.sendResponse(channel);
 				return;
@@ -108,14 +113,14 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 				return;
 			}
 
-			if (PermissionManager.isWhitelisted(requester)){
-				TrackScheduler.addToQueue(track, requester);
+			if (PermissionManager.isWhitelisted(requester, guild)){
+				scheduler.addToQueue(track, requester);
 				response = new CommandResponse("notes", requester.getAsMention() + " added the following track to the queue:");
 				response.attachEmbed(TrackUtil.generateTrackInfoEmbed(track));
 				response.sendResponse(channel);
 			} else {
 				if (!(track.getInfo().length <= 60000) && !(track.getInfo().length >= 900000)){
-					TrackScheduler.addToQueue(track, requester);
+					scheduler.addToQueue(track, requester);
 					response = new CommandResponse("notes", requester.getAsMention() + " added the following track to the queue:");
 					response.attachEmbed(TrackUtil.generateTrackInfoEmbed(track));
 					response.sendResponse(channel);
@@ -125,12 +130,12 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 				}
 			}
 		} else {
-			if (PermissionManager.isWhitelisted(requester)){
+			if (PermissionManager.isWhitelisted(requester, guild)){
 				ArrayList<AudioTrack> addedTracks = new ArrayList<>();
 				for (AudioTrack playlistTrack : playlist.getTracks()){
-					if (!TrackScheduler.isQueueFull()){
-						if (!TrackScheduler.isQueued(playlistTrack) && !playlistTrack.getInfo().isStream){
-							TrackScheduler.addToQueue(playlistTrack, requester);
+					if (!scheduler.isQueueFull()){
+						if (!scheduler.isQueued(playlistTrack) && !playlistTrack.getInfo().isStream){
+							scheduler.addToQueue(playlistTrack, requester);
 							addedTracks.add(playlistTrack);
 						}
 					} else {
@@ -155,13 +160,15 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 
 	@Override
 	public void noMatches(){
-		channel.sendMessage(":map: Sorry " + requester.getAsMention() + ", but I was not able to find that track.").queue();
+		CommandResponse response = new CommandResponse("map", "Sorry " + requester.getAsMention() + ", but I was not able to find that track.").setDeletionDelay(10, TimeUnit.SECONDS);
+		response.sendResponse(channel);
 	}
 
 	@Override
 	public void loadFailed(FriendlyException exception){
-		channel.sendMessage(":sos: Sorry " + requester.getAsMention() + ", but an error occurred while trying to get that track!").queue();
-		logger.error("An error occured while fetching a track!");
+		logger.error("An error occurred while fetching a track!");
 		exception.printStackTrace();
+		CommandResponse response = new CommandResponse("sos", "Sorry " + requester.getAsMention() + ", but an error occurred while trying to get that track!").setDeletionDelay(10, TimeUnit.SECONDS);
+		response.sendResponse(channel);
 	}
 }

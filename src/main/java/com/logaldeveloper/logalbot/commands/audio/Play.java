@@ -18,7 +18,6 @@
 package com.logaldeveloper.logalbot.commands.audio;
 
 import com.logaldeveloper.logalbot.Main;
-import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
@@ -42,15 +41,15 @@ public class Play implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (TrackScheduler.isQueueLocked() && !PermissionManager.isWhitelisted(executor)){
+		if (AudioUtil.getTrackScheduler(channel.getGuild()).isQueueLocked() && !PermissionManager.isWhitelisted(executor, channel.getGuild())){
 			return new CommandResponse("lock", "Sorry " + executor.getAsMention() + ", but the queue is locked.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (AudioUtil.isTrackLoaded() && !VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel().getName() + "` in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
+		if (AudioUtil.isTrackLoaded(channel.getGuild()) && !VoiceChannelUtil.isInCurrentVoiceChannel(channel.getGuild(), executor)){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel(channel.getGuild()).getName() + "` in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (VoiceChannelUtil.getCurrentVoiceChannelFromUser(executor) == null){
+		if (VoiceChannelUtil.getCurrentVoiceChannelFromUser(channel.getGuild(), executor) == null){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in a voice channel in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 

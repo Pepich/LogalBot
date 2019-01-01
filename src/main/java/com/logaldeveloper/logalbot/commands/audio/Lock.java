@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 public class Lock implements Command {
 	@Override
 	public void initialize(){
-		TrackScheduler.setQueueLocked(false);
 	}
 
 	@Override
@@ -39,11 +38,12 @@ public class Lock implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (TrackScheduler.isQueueLocked()){
-			TrackScheduler.setQueueLocked(false);
+		TrackScheduler scheduler = AudioUtil.getTrackScheduler(channel.getGuild());
+		if (scheduler.isQueueLocked()){
+			scheduler.setQueueLocked(false);
 			return new CommandResponse("unlock", executor.getAsMention() + " unlocked the queue.");
 		} else {
-			TrackScheduler.setQueueLocked(true);
+			scheduler.setQueueLocked(true);
 			return new CommandResponse("lock", executor.getAsMention() + " locked the queue.");
 		}
 	}

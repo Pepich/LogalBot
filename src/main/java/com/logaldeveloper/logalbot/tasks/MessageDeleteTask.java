@@ -20,7 +20,7 @@ package com.logaldeveloper.logalbot.tasks;
 import net.dv8tion.jda.core.entities.Message;
 
 public class MessageDeleteTask implements Runnable {
-	private Message messageToDelete;
+	private final Message messageToDelete;
 
 	public MessageDeleteTask(Message message){
 		this.messageToDelete = message;

@@ -52,8 +52,10 @@ public class Remove implements Command {
 		}
 
 		try{
-			AudioTrack removedTrack = TrackScheduler.getQueue().get(index - 1);
-			TrackScheduler.removeFromQueue(index - 1);
+			TrackScheduler scheduler = AudioUtil.getTrackScheduler(channel.getGuild());
+			AudioTrack removedTrack = scheduler.getQueue().get(index - 1);
+
+			scheduler.removeFromQueue(index - 1);
 			CommandResponse response = new CommandResponse("scissors", executor.getAsMention() + " removed the following track from the queue:");
 			response.attachEmbed(TrackUtil.generateTrackInfoEmbed(removedTrack));
 			return response;

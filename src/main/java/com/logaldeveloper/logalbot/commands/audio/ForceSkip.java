@@ -18,13 +18,13 @@
 package com.logaldeveloper.logalbot.commands.audio;
 
 import com.logaldeveloper.logalbot.Main;
-import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.TrackUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -41,16 +41,18 @@ public class ForceSkip implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (!AudioUtil.isTrackLoaded()){
+		Guild guild = channel.getGuild();
+		if (!AudioUtil.isTrackLoaded(guild)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to force skip it.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (!VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel().getName() + "` in order to force skip tracks.").setDeletionDelay(10, TimeUnit.SECONDS);
+		if (!VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(guild).getName() + "` in order to force skip tracks.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		AudioTrack skippedTrack = AudioUtil.getLoadedTrack();
-		TrackScheduler.skipCurrentTrack();
+		AudioTrack skippedTrack = AudioUtil.getLoadedTrack(guild);
+
+		AudioUtil.getTrackScheduler(guild).skipCurrentTrack();
 		CommandResponse response = new CommandResponse("gun", executor.getAsMention() + " force skipped the following track:");
 		response.attachEmbed(TrackUtil.generateTrackInfoEmbed(skippedTrack));
 		return response;

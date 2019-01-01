@@ -19,6 +19,7 @@ package com.logaldeveloper.logalbot.commands;
 
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.utils.DataManager;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,21 +27,21 @@ import org.slf4j.LoggerFactory;
 public class PermissionManager {
 	private static final Logger logger = LoggerFactory.getLogger(PermissionManager.class);
 
-	public static boolean isWhitelisted(User user){
-		if (DataManager.getUserValue(user, Main.getGuild(), "whitelisted") == null){
-			DataManager.setUserValue(user, Main.getGuild(), "whitelisted", "false");
+	public static boolean isWhitelisted(User user, Guild guild){
+		if (DataManager.getUserValue(user, guild, "whitelisted") == null){
+			DataManager.setUserValue(user, guild, "whitelisted", "false");
 		}
 
-		return DataManager.getUserValue(user, Main.getGuild(), "whitelisted").equals("true");
+		return DataManager.getUserValue(user, guild, "whitelisted").equals("true");
 	}
 
-	public static void addToWhitelist(User user){
-		DataManager.setUserValue(user, Main.getGuild(), "whitelisted", "true");
+	public static void addToWhitelist(User user, Guild guild){
+		DataManager.setUserValue(user, guild, "whitelisted", "true");
 		logger.info("'" + user.getName() + "' was added to the whitelist.");
 	}
 
-	public static void removeFromWhitelist(User user){
-		DataManager.setUserValue(user, Main.getGuild(), "whitelisted", "false");
+	public static void removeFromWhitelist(User user, Guild guild){
+		DataManager.setUserValue(user, guild, "whitelisted", "false");
 		logger.info("'" + user.getName() + "' was removed from the whitelist.");
 	}
 }

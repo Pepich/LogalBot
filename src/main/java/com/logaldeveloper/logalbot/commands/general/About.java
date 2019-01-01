@@ -17,7 +17,6 @@
 
 package com.logaldeveloper.logalbot.commands.general;
 
-import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -30,15 +29,6 @@ public class About implements Command {
 
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
-		String message = "";
-		message += "Hey there " + executor.getAsMention() + "! ";
-		if (Main.getJDA().getSelfUser().getName().equalsIgnoreCase("LogalBot")){
-			message += "I'm " + Main.getJDA().getSelfUser().getName() + ", a bot created by LogalDeveloper but maintained by " + Main.getOwner().getAsMention() + ".\n";
-			message += "My GitHub repository can be found here: https://github.com/LogalDeveloper/LogalBot";
-		} else {
-			message += "I'm " + Main.getJDA().getSelfUser().getName() + ", a fork of LogalBot maintained by " + Main.getOwner().getAsMention() + ".\n";
-			message += "My core GitHub repository can be found here: https://github.com/LogalDeveloper/LogalBot";
-		}
-		return new CommandResponse("wave", message);
+		return new CommandResponse("wave", "Hey there " + executor.getAsMention() + "! I'm " + executor.getJDA().getSelfUser().getName() + ", a bot created by LogalDeveloper.");
 	}
 }

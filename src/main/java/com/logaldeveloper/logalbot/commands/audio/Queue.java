@@ -18,7 +18,6 @@
 package com.logaldeveloper.logalbot.commands.audio;
 
 import com.logaldeveloper.logalbot.Main;
-import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
@@ -33,19 +32,18 @@ public class Queue implements Command {
 	public void initialize(){
 	}
 
-	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (TrackScheduler.isQueueEmpty()){
+		if (AudioUtil.getTrackScheduler(channel.getGuild()).isQueueEmpty()){
 			return new CommandResponse("information_source", executor.getAsMention() + ", the queue is empty.");
 		}
 
 		CommandResponse response = new CommandResponse("bookmark_tabs", executor.getAsMention() + ", the following tracks are in the queue:");
-		response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(TrackScheduler.getQueue()));
+		response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(AudioUtil.getTrackScheduler(channel.getGuild()).getQueue()));
 		return response;
 	}
 }

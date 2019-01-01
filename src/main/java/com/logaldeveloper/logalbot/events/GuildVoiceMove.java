@@ -17,8 +17,6 @@
 
 package com.logaldeveloper.logalbot.events;
 
-import com.logaldeveloper.logalbot.Main;
-import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import net.dv8tion.jda.core.entities.Member;
@@ -35,33 +33,29 @@ public class GuildVoiceMove extends ListenerAdapter {
 
 	@Override
 	public void onGuildVoiceMove(GuildVoiceMoveEvent event){
-		if (!event.getGuild().equals(Main.getGuild())){
+		if (!VoiceChannelUtil.isConnectedToVoiceChannel(event.getGuild())){
 			return;
 		}
 
-		if (!VoiceChannelUtil.isConnectedToVoiceChannel()){
-			return;
-		}
-
-		if (!AudioUtil.isTrackLoaded()){
+		if (!AudioUtil.isTrackLoaded(event.getGuild())){
 			return;
 		}
 
 		Member member = event.getMember();
 
-		if (member.getUser().equals(Main.getJDA().getSelfUser())){
+		if (member.getUser().equals(event.getJDA().getSelfUser())){
 			return;
 		}
 
 		VoiceChannel leftChannel = event.getChannelLeft();
 
-		if (leftChannel.equals(VoiceChannelUtil.getCurrentVoiceChannel())){
+		if (leftChannel.equals(VoiceChannelUtil.getCurrentVoiceChannel(event.getGuild()))){
 			List<Member> members = leftChannel.getMembers();
-			if (members.size() == 1 && members.get(0).getUser().equals(Main.getJDA().getSelfUser())){
+			if (members.size() == 1 && members.get(0).getUser().equals(event.getJDA().getSelfUser())){
 				logger.info("All listeners left the voice channel.");
-				TrackScheduler.clearQueue();
-				if (AudioUtil.isTrackLoaded()){
-					AudioUtil.stopTrack();
+				AudioUtil.getTrackScheduler(event.getGuild()).clearQueue();
+				if (AudioUtil.isTrackLoaded(event.getGuild())){
+					AudioUtil.stopTrack(event.getGuild());
 				}
 			}
 		}

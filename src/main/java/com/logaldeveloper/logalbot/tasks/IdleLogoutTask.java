@@ -18,10 +18,17 @@
 package com.logaldeveloper.logalbot.tasks;
 
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
+import net.dv8tion.jda.core.entities.Guild;
 
 public class IdleLogoutTask implements Runnable {
+	private final Guild guild;
+
+	public IdleLogoutTask(Guild guild){
+		this.guild = guild;
+	}
+
 	@Override
 	public void run(){
-		VoiceChannelUtil.leaveCurrentVoiceChannel();
+		VoiceChannelUtil.leaveCurrentVoiceChannel(guild);
 	}
 }

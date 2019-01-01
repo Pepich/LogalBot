@@ -45,7 +45,7 @@ public class CommandManager {
 
 		logger.info(executor.getName() + " executed command '" + commandName + "' with arguments '" + String.join(" ", arguments) + "'");
 
-		if (permissionMap.get(commandName) && !PermissionManager.isWhitelisted(executor)){
+		if (permissionMap.get(commandName) && !PermissionManager.isWhitelisted(executor, channel.getGuild())){
 			logger.info(executor.getName() + " was denied access to command due to not being on the whitelist.");
 			response = new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.");
 			response.setDeletionDelay(10, TimeUnit.SECONDS);

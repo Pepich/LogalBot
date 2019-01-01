@@ -19,6 +19,8 @@ package com.logaldeveloper.logalbot.events;
 
 import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.CommandManager;
+import com.logaldeveloper.logalbot.commands.PermissionManager;
+import com.logaldeveloper.logalbot.utils.AudioUtil;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.SelfUser;
@@ -31,12 +33,13 @@ import java.util.List;
 public class GuildMessageReceived extends ListenerAdapter {
 	@Override
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-		if (!event.getGuild().equals(Main.getGuild())){
+		if (event.getAuthor().isBot() || event.getMessage().isTTS()){
 			return;
 		}
 
-		if (event.getAuthor().isBot() || event.getMessage().isTTS()){
-			return;
+		if (!AudioUtil.isInitialized(event.getGuild())){
+			AudioUtil.initialize(event.getGuild());
+			PermissionManager.addToWhitelist(Main.getOwner(), event.getGuild());
 		}
 
 		Message message = event.getMessage();
@@ -47,7 +50,7 @@ public class GuildMessageReceived extends ListenerAdapter {
 			String[] rawCommand = rawMessage.split(" ");
 			String[] command = Arrays.copyOfRange(rawCommand, 1, rawCommand.length);
 			if (command.length >= 1){
-				message.delete().reason("LogalBot Command Execution.").queue();
+				message.delete().reason("LogalBot Command Execution").queue();
 				CommandManager.executeCommand(command, event.getAuthor(), event.getChannel());
 			}
 		}

@@ -38,12 +38,12 @@ public class NowPlaying implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (!AudioUtil.isTrackLoaded()){
+		if (!AudioUtil.isTrackLoaded(channel.getGuild())){
 			return new CommandResponse("mute", executor.getAsMention() + ", there is nothing currently playing.");
 		}
 
 		CommandResponse response = new CommandResponse("dancer", executor.getAsMention() + ", this is the track currently playing:");
-		response.attachEmbed(TrackUtil.generateTrackInfoEmbed(AudioUtil.getLoadedTrack()));
+		response.attachEmbed(TrackUtil.generateTrackInfoEmbed(AudioUtil.getLoadedTrack(channel.getGuild())));
 		return response;
 	}
 }
