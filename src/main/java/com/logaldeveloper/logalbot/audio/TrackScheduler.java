@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class TrackScheduler extends AudioEventAdapter {
+public final class TrackScheduler extends AudioEventAdapter {
 	private final Guild guild;
 	private final ArrayList<AudioTrack> queue = new ArrayList<>();
 	private final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
@@ -65,6 +65,11 @@ public class TrackScheduler extends AudioEventAdapter {
 			AudioUtil.playTrack(guild, queue.get(0));
 			queue.remove(0);
 		}
+	}
+
+	public void removeFromQueue(int index){
+		logger.info("Track '" + queue.get(index).getInfo().title + "' has been removed from the queue.");
+		queue.remove(index);
 	}
 
 	public boolean isQueued(AudioTrack track){
@@ -98,11 +103,6 @@ public class TrackScheduler extends AudioEventAdapter {
 
 	public ArrayList<AudioTrack> getQueue(){
 		return queue;
-	}
-
-	public void removeFromQueue(int index){
-		logger.info("Track '" + queue.get(index).getInfo().title + "' has been removed from the queue.");
-		queue.remove(index);
 	}
 
 	public void skipCurrentTrack(){

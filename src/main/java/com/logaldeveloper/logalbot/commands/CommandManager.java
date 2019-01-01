@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public class CommandManager {
+public final class CommandManager {
 	private static final HashMap<String, Command> commandMap = new HashMap<>();
 	private static final HashMap<String, Boolean> permissionMap = new HashMap<>();
 

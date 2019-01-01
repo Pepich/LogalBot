@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
-public class AudioUtil {
+public final class AudioUtil {
 	private static final Logger logger = LoggerFactory.getLogger(AudioUtil.class);
 
 	private static final AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
@@ -63,11 +63,11 @@ public class AudioUtil {
 		return guild.getAudioManager().getConnectedChannel();
 	}
 
-	static void closeAudioConnection(Guild guild){
+	public static void closeAudioConnection(Guild guild){
 		guild.getAudioManager().closeAudioConnection();
 	}
 
-	static void openAudioConnection(VoiceChannel channel){
+	public static void openAudioConnection(VoiceChannel channel){
 		Guild guild = channel.getGuild();
 		AudioManager audioManager = guild.getAudioManager();
 
@@ -82,6 +82,14 @@ public class AudioUtil {
 
 	public static boolean isTrackLoaded(Guild guild){
 		return !(getLoadedTrack(guild) == null);
+	}
+
+	public static void playTrack(Guild guild, AudioTrack track){
+		players.get(guild.getId()).playTrack(track);
+	}
+
+	public static void stopTrack(Guild guild){
+		players.get(guild.getId()).stopTrack();
 	}
 
 	public static AudioTrack getLoadedTrack(Guild guild){
@@ -109,14 +117,6 @@ public class AudioUtil {
 	public static void setVolume(Guild guild, int volume){
 		logger.info("The audio player's volume was set to " + volume + "%.");
 		players.get(guild.getId()).setVolume(volume);
-	}
-
-	public static void playTrack(Guild guild, AudioTrack track){
-		players.get(guild.getId()).playTrack(track);
-	}
-
-	public static void stopTrack(Guild guild){
-		players.get(guild.getId()).stopTrack();
 	}
 
 	public static boolean isAllowedChannelForAudioCommands(TextChannel channel){

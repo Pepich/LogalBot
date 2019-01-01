@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class TrackLoadHandler implements AudioLoadResultHandler {
-	private static final Logger logger = LoggerFactory.getLogger(TrackLoadHandler.class);
+public final class TrackLoadHandler implements AudioLoadResultHandler {
+	private final Logger logger = LoggerFactory.getLogger(TrackLoadHandler.class);
 	private final User requester;
 	private final TextChannel channel;
 

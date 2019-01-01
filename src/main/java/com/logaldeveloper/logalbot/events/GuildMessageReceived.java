@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -27,7 +27,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.util.Arrays;
 import java.util.List;
 
-public class GuildMessageReceived extends ListenerAdapter {
+public final class GuildMessageReceived extends ListenerAdapter {
 	@Override
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event){
 		if (event.getAuthor().isBot() || event.getMessage().isTTS()){

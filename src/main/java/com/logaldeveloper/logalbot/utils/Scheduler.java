@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,7 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class Scheduler {
+public final class Scheduler {
 	private static final ScheduledExecutorService schedulerPool = Executors.newScheduledThreadPool(1);
 
 	public static ScheduledFuture schedule(Runnable runnable, long delay, TimeUnit unit){

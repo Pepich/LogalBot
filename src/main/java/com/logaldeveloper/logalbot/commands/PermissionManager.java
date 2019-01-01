@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -17,14 +17,13 @@
 
 package com.logaldeveloper.logalbot.commands;
 
-import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.utils.DataManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PermissionManager {
+public final class PermissionManager {
 	private static final Logger logger = LoggerFactory.getLogger(PermissionManager.class);
 
 	public static boolean isWhitelisted(User user, Guild guild){

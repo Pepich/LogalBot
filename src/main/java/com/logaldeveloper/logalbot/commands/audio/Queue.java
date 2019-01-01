@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,12 +22,13 @@ import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.TrackUtil;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.concurrent.TimeUnit;
 
-public class Queue implements Command {
+public final class Queue implements Command {
 	@Override
 	public void initialize(){
 	}
@@ -38,12 +39,13 @@ public class Queue implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (AudioUtil.getTrackScheduler(channel.getGuild()).isQueueEmpty()){
+		Guild guild = channel.getGuild();
+		if (AudioUtil.getTrackScheduler(guild).isQueueEmpty()){
 			return new CommandResponse("information_source", executor.getAsMention() + ", the queue is empty.");
 		}
 
 		CommandResponse response = new CommandResponse("bookmark_tabs", executor.getAsMention() + ", the following tracks are in the queue:");
-		response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(AudioUtil.getTrackScheduler(channel.getGuild()).getQueue()));
+		response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(AudioUtil.getTrackScheduler(guild).getQueue()));
 		return response;
 	}
 }

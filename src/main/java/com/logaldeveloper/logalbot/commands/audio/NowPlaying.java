@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,12 +22,13 @@ import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.TrackUtil;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.concurrent.TimeUnit;
 
-public class NowPlaying implements Command {
+public final class NowPlaying implements Command {
 	@Override
 	public void initialize(){
 	}
@@ -38,12 +39,13 @@ public class NowPlaying implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (!AudioUtil.isTrackLoaded(channel.getGuild())){
+		Guild guild = channel.getGuild();
+		if (!AudioUtil.isTrackLoaded(guild)){
 			return new CommandResponse("mute", executor.getAsMention() + ", there is nothing currently playing.");
 		}
 
 		CommandResponse response = new CommandResponse("dancer", executor.getAsMention() + ", this is the track currently playing:");
-		response.attachEmbed(TrackUtil.generateTrackInfoEmbed(AudioUtil.getLoadedTrack(channel.getGuild())));
+		response.attachEmbed(TrackUtil.generateTrackInfoEmbed(AudioUtil.getLoadedTrack(guild)));
 		return response;
 	}
 }

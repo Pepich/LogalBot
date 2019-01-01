@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -23,6 +23,7 @@ import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -30,7 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-public class Play implements Command {
+public final class Play implements Command {
 	@Override
 	public void initialize(){
 	}
@@ -41,15 +42,16 @@ public class Play implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (AudioUtil.getTrackScheduler(channel.getGuild()).isQueueLocked() && !PermissionManager.isWhitelisted(executor, channel.getGuild())){
+		Guild guild = channel.getGuild();
+		if (AudioUtil.getTrackScheduler(guild).isQueueLocked() && !PermissionManager.isWhitelisted(executor, guild)){
 			return new CommandResponse("lock", "Sorry " + executor.getAsMention() + ", but the queue is locked.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (AudioUtil.isTrackLoaded(channel.getGuild()) && !VoiceChannelUtil.isInCurrentVoiceChannel(channel.getGuild(), executor)){
+		if (AudioUtil.isTrackLoaded(guild) && !VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel(channel.getGuild()).getName() + "` in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (VoiceChannelUtil.getCurrentVoiceChannelFromUser(channel.getGuild(), executor) == null){
+		if (VoiceChannelUtil.getCurrentVoiceChannelFromUser(guild, executor) == null){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in a voice channel in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 

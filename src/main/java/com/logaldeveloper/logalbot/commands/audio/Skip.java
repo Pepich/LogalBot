@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -24,13 +24,14 @@ import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.TrackUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class Skip implements Command {
+public final class Skip implements Command {
 	private ArrayList<String> skipVotes;
 
 	@Override
@@ -56,12 +57,13 @@ public class Skip implements Command {
 			return new CommandResponse("no_entry_sign", "You have already voted to skip this track " + executor.getAsMention() + ".").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		int listeners = (int) VoiceChannelUtil.getCurrentVoiceChannel(channel.getGuild()).getMembers().stream().filter(member -> !member.getUser().isBot()).count();
+		Guild guild = channel.getGuild();
+		int listeners = (int) VoiceChannelUtil.getCurrentVoiceChannel(guild).getMembers().stream().filter(member -> !member.getUser().isBot()).count();
 		int required = (int) Math.ceil(listeners * .55);
 		skipVotes.add(executor.getId());
 		if (skipVotes.size() >= required){
-			AudioTrack skippedTrack = AudioUtil.getLoadedTrack(channel.getGuild());
-			AudioUtil.getTrackScheduler(channel.getGuild()).skipCurrentTrack();
+			AudioTrack skippedTrack = AudioUtil.getLoadedTrack(guild);
+			AudioUtil.getTrackScheduler(guild).skipCurrentTrack();
 			CommandResponse response = new CommandResponse("gun", "The following track has been skipped:");
 			response.attachEmbed(TrackUtil.generateTrackInfoEmbed(skippedTrack));
 			return response;

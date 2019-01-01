@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -23,7 +23,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import java.util.ArrayList;
 
-public class TrackUtil {
+public final class TrackUtil {
 	public static MessageEmbed generateTrackInfoEmbed(AudioTrack track){
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.addField(StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);

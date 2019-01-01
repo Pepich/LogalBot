@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class GuildVoiceLeave extends ListenerAdapter {
+public final class GuildVoiceLeave extends ListenerAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(GuildVoiceLeave.class);
 
 	@Override

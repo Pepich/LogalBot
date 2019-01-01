@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 
-public class Main {
+public final class Main {
 	private static final String token = System.getenv("TOKEN");
 	private static final String ownerUserID = System.getenv("OWNER_USER_ID");
 	private static final String textChannelNameForAudioCommands = System.getenv("AUDIO_COMMANDS_TEXT_CHANNEL");

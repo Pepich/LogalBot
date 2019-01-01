@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,7 +21,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import redis.clients.jedis.Jedis;
 
-public class DataManager {
+public final class DataManager {
 	private static final String host = System.getenv("REDIS_HOST");
 	private static final String password = System.getenv("REDIS_AUTH");
 

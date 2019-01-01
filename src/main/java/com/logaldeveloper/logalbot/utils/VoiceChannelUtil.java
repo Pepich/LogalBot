@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -23,7 +23,7 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VoiceChannelUtil {
+public final class VoiceChannelUtil {
 	private static final Logger logger = LoggerFactory.getLogger(VoiceChannelUtil.class);
 
 	public static VoiceChannel getCurrentVoiceChannelFromUser(Guild guild, User user){

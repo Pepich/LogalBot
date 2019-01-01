@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,7 +21,7 @@ import com.logaldeveloper.logalbot.utils.AudioUtil;
 import net.dv8tion.jda.core.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-public class GuildReady extends ListenerAdapter {
+public final class GuildReady extends ListenerAdapter {
 	@Override
 	public void onGuildReady(GuildReadyEvent event){
 		if (!AudioUtil.isInitialized(event.getGuild())){

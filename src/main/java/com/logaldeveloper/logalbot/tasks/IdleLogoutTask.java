@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Logan Fick
+ * Copyright (C) 2019 Logan Fick
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -20,7 +20,7 @@ package com.logaldeveloper.logalbot.tasks;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import net.dv8tion.jda.core.entities.Guild;
 
-public class IdleLogoutTask implements Runnable {
+public final class IdleLogoutTask implements Runnable {
 	private final Guild guild;
 
 	public IdleLogoutTask(Guild guild){
