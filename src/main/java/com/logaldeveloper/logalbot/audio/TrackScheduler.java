@@ -17,11 +17,11 @@
 
 package com.logaldeveloper.logalbot.audio;
 
-import com.logaldeveloper.logalbot.commands.CommandManager;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
 import com.logaldeveloper.logalbot.tasks.IdleLogoutTask;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.Scheduler;
+import com.logaldeveloper.logalbot.utils.SkipManager;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -119,6 +119,7 @@ public final class TrackScheduler extends AudioEventAdapter {
 			logger.info("A track has started. Cancelling scheduled disconnect.");
 			idleLogoutTask.cancel(true);
 		}
+		SkipManager.resetVotes(guild);
 	}
 
 	@Override
@@ -135,5 +136,6 @@ public final class TrackScheduler extends AudioEventAdapter {
 			logger.info("Disconnecting from voice channel '" + VoiceChannelUtil.getCurrentVoiceChannel(guild).getName() + "' in 1 minute...");
 			idleLogoutTask = Scheduler.schedule(new IdleLogoutTask(guild), 1, TimeUnit.MINUTES);
 		}
+		SkipManager.resetVotes(guild);
 	}
 }

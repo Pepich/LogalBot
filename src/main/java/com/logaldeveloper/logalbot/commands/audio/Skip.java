@@ -21,6 +21,7 @@ import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
+import com.logaldeveloper.logalbot.utils.SkipManager;
 import com.logaldeveloper.logalbot.utils.TrackUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -28,12 +29,9 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public final class Skip implements Command {
-	private ArrayList<String> skipVotes;
-
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
@@ -48,25 +46,23 @@ public final class Skip implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(channel.getGuild()).getName() + "` in order to vote to skip tracks.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (skipVotes.contains(executor.getId())){
+		Guild guild = channel.getGuild();
+		if (SkipManager.hasVoted(guild, executor)){
 			return new CommandResponse("no_entry_sign", "You have already voted to skip this track " + executor.getAsMention() + ".").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		Guild guild = channel.getGuild();
-		int listeners = (int) VoiceChannelUtil.getCurrentVoiceChannel(guild).getMembers().stream().filter(member -> !member.getUser().isBot()).count();
-		int required = (int) Math.ceil(listeners * .55);
-		skipVotes.add(executor.getId());
-		if (skipVotes.size() >= required){
+		SkipManager.registerVote(guild, executor);
+		if (SkipManager.shouldSkip(guild)){
 			AudioTrack skippedTrack = AudioUtil.getLoadedTrack(guild);
 			AudioUtil.getTrackScheduler(guild).skipCurrentTrack();
 			CommandResponse response = new CommandResponse("gun", "The following track has been skipped:");
 			response.attachEmbed(TrackUtil.generateTrackInfoEmbed(skippedTrack));
 			return response;
 		} else {
-			if ((required - skipVotes.size()) == 1){
-				return new CommandResponse("x", executor.getAsMention() + " has voted to skip this track. " + (required - skipVotes.size()) + " more vote is needed.");
+			if (SkipManager.getRemainingRequired(guild) == 1){
+				return new CommandResponse("x", executor.getAsMention() + " has voted to skip this track. " + SkipManager.getRemainingRequired(guild) + " more vote is needed.");
 			} else {
-				return new CommandResponse("x", executor.getAsMention() + " has voted to skip this track. " + (required - skipVotes.size()) + " more votes are needed.");
+				return new CommandResponse("x", executor.getAsMention() + " has voted to skip this track. " + SkipManager.getRemainingRequired(guild) + " more votes are needed.");
 			}
 		}
 	}
