@@ -22,7 +22,7 @@ import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
-import com.logaldeveloper.logalbot.utils.StringUtil;
+import com.logaldeveloper.logalbot.utils.TrackUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -63,7 +63,9 @@ public class Skip implements Command {
 		if (skipVotes.size() >= required){
 			AudioTrack skippedTrack = AudioUtil.getLoadedTrack();
 			TrackScheduler.skipCurrentTrack();
-			return new CommandResponse("gun", "**" + StringUtil.sanatize(skippedTrack.getInfo().title) + "** has been skipped.");
+			CommandResponse response = new CommandResponse("gun", "The following track has been skipped:");
+			response.attachEmbed(TrackUtil.generateTrackInfoEmbed(skippedTrack));
+			return response;
 		} else {
 			if ((required - skipVotes.size()) == 1){
 				return new CommandResponse("x", executor.getAsMention() + " has voted to skip this track. " + (required - skipVotes.size()) + " more vote is needed.");

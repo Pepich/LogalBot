@@ -17,11 +17,9 @@
 
 package com.logaldeveloper.logalbot.audio;
 
+import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
-import com.logaldeveloper.logalbot.utils.AudioUtil;
-import com.logaldeveloper.logalbot.utils.EmojiUtil;
-import com.logaldeveloper.logalbot.utils.StringUtil;
-import com.logaldeveloper.logalbot.utils.TimeUtil;
+import com.logaldeveloper.logalbot.utils.TrackUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -32,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class TrackLoadHandler implements AudioLoadResultHandler {
 	private static final Logger logger = LoggerFactory.getLogger(TrackLoadHandler.class);
@@ -45,35 +44,46 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 
 	@Override
 	public void trackLoaded(AudioTrack track){
+		CommandResponse response;
+
 		if (TrackScheduler.isQueueFull()){
-			channel.sendMessage(":card_box: Sorry " + requester.getAsMention() + ", but the queue is full.").queue();
+			response = new CommandResponse("card_box", "Sorry " + requester.getAsMention() + ", but the queue is full.").setDeletionDelay(10, TimeUnit.SECONDS);
+			response.sendResponse(channel);
 			return;
 		}
 
 		if (track.getInfo().isStream){
-			channel.sendMessage(":no_entry_sign: Sorry " + requester.getAsMention() + ", but streams cannot be added to the queue.").queue();
+			response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but streams cannot be added to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
+			response.sendResponse(channel);
 			return;
 		}
 
 		if ((track.getInfo().length <= 60000 || track.getInfo().length >= 900000) && !PermissionManager.isWhitelisted(requester)){
-			channel.sendMessage(":no_entry_sign: Sorry " + requester.getAsMention() + ", but you can only add tracks between 1 and 15 minutes in length.").queue();
+			response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but you can only add tracks between 1 and 15 minutes in length.").setDeletionDelay(10, TimeUnit.SECONDS);
+			response.sendResponse(channel);
 			return;
 		}
 
 		if (TrackScheduler.isQueued(track)){
-			channel.sendMessage(":no_entry_sign: Sorry " + requester.getAsMention() + ", but that track is already queued.").queue();
+			response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but that track is already queued.").setDeletionDelay(10, TimeUnit.SECONDS);
+			response.sendResponse(channel);
 			return;
 		}
 
-		channel.sendMessage(":notes: " + requester.getAsMention() + " added **" + StringUtil.sanatize(track.getInfo().title) + "** to the queue. (" + TimeUtil.formatTime(track.getInfo().length) + ")").queue();
 		TrackScheduler.addToQueue(track, requester);
+		response = new CommandResponse("notes", requester.getAsMention() + " added the following track to the queue:");
+		response.attachEmbed(TrackUtil.generateTrackInfoEmbed(track));
+		response.sendResponse(channel);
 	}
 
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@Override
 	public void playlistLoaded(AudioPlaylist playlist){
+		CommandResponse response;
+
 		if (TrackScheduler.isQueueFull()){
-			channel.sendMessage(":card_box: Sorry " + requester.getAsMention() + ", but the queue is full.").queue();
+			response = new CommandResponse("card_box", "Sorry " + requester.getAsMention() + ", but the queue is full.").setDeletionDelay(10, TimeUnit.SECONDS);
+			response.sendResponse(channel);
 			return;
 		}
 
@@ -87,60 +97,58 @@ public class TrackLoadHandler implements AudioLoadResultHandler {
 
 		if (track != null){
 			if (TrackScheduler.isQueued(track)){
-				channel.sendMessage(":no_entry_sign: Sorry " + requester.getAsMention() + ", but that track is already queued.").queue();
+				response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but that track is already queued.").setDeletionDelay(10, TimeUnit.SECONDS);
+				response.sendResponse(channel);
 				return;
 			}
 
 			if (track.getInfo().isStream){
-				channel.sendMessage(":no_entry_sign: Sorry " + requester.getAsMention() + ", but streams cannot be added to the queue.").queue();
+				response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but streams cannot be added to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
+				response.sendResponse(channel);
 				return;
 			}
 
 			if (PermissionManager.isWhitelisted(requester)){
-				channel.sendMessage(":notes: " + requester.getAsMention() + " added **" + StringUtil.sanatize(track.getInfo().title) + "** to the queue. (" + TimeUtil.formatTime(track.getInfo().length) + ")").queue();
 				TrackScheduler.addToQueue(track, requester);
+				response = new CommandResponse("notes", requester.getAsMention() + " added the following track to the queue:");
+				response.attachEmbed(TrackUtil.generateTrackInfoEmbed(track));
+				response.sendResponse(channel);
 			} else {
 				if (!(track.getInfo().length <= 60000) && !(track.getInfo().length >= 900000)){
-					channel.sendMessage(":notes: " + requester.getAsMention() + " added **" + StringUtil.sanatize(track.getInfo().title) + "** to the queue. (" + TimeUtil.formatTime(track.getInfo().length) + ")").queue();
 					TrackScheduler.addToQueue(track, requester);
+					response = new CommandResponse("notes", requester.getAsMention() + " added the following track to the queue:");
+					response.attachEmbed(TrackUtil.generateTrackInfoEmbed(track));
+					response.sendResponse(channel);
 				} else {
-					channel.sendMessage(":no_entry_sign: Sorry " + requester.getAsMention() + ", but you are not allowed to add tracks less than 1 minute or greater than 15 minutes in length.").queue();
+					response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but you are not allowed to add tracks less than 1 minute or greater than 15 minutes in length.").setDeletionDelay(10, TimeUnit.SECONDS);
+					response.sendResponse(channel);
 				}
 			}
 		} else {
 			if (PermissionManager.isWhitelisted(requester)){
-				boolean shouldCountByZero = !AudioUtil.isTrackLoaded();
 				ArrayList<AudioTrack> addedTracks = new ArrayList<>();
-				long time = 0;
 				for (AudioTrack playlistTrack : playlist.getTracks()){
 					if (!TrackScheduler.isQueueFull()){
 						if (!TrackScheduler.isQueued(playlistTrack) && !playlistTrack.getInfo().isStream){
 							TrackScheduler.addToQueue(playlistTrack, requester);
 							addedTracks.add(playlistTrack);
-							time += playlistTrack.getInfo().length;
 						}
 					} else {
 						break;
 					}
 				}
 
-				StringBuilder reply = new StringBuilder(":notes: " + requester.getAsMention() + " added the following songs to the queue:\n");
-				for (int i = 0; i < 11; i++){
-					try{
-						addedTracks.get(i); // Attempt to trigger an IndexOutOfBoundsException before we append to the string, otherwise we could get an incomplete track line added.
-						if (shouldCountByZero){
-							reply.append(EmojiUtil.intToEmoji(i)).append(" **").append(StringUtil.sanatize(addedTracks.get(i).getInfo().title)).append("** (").append(TimeUtil.formatTime(addedTracks.get(i).getDuration())).append(")\n");
-						} else {
-							reply.append(EmojiUtil.intToEmoji(i + 1)).append(" **").append(StringUtil.sanatize(addedTracks.get(i).getInfo().title)).append("** (").append(TimeUtil.formatTime(addedTracks.get(i).getDuration())).append(")\n");
-						}
-					} catch (IndexOutOfBoundsException exception){
-						break;
-					}
+				if (addedTracks.size() == 0){
+					response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but none of the tracks in that playlist could be added.").setDeletionDelay(10, TimeUnit.SECONDS);
+					response.sendResponse(channel);
 				}
-				reply.append(":clock130: Total play time: ").append(TimeUtil.formatTime(time));
-				channel.sendMessage(reply.toString()).queue();
+
+				response = new CommandResponse("notes", requester.getAsMention() + " added the following tracks to the queue:");
+				response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(addedTracks));
+				response.sendResponse(channel);
 			} else {
-				channel.sendMessage(":no_entry_sign: Sorry " + requester.getAsMention() + ", but you are not allowed to add playlists to the queue.").queue();
+				response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but you are not allowed to add playlists to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
+				response.sendResponse(channel);
 			}
 		}
 	}

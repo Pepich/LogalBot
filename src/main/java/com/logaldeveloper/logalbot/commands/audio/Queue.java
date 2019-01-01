@@ -21,7 +21,8 @@ import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
-import com.logaldeveloper.logalbot.utils.*;
+import com.logaldeveloper.logalbot.utils.AudioUtil;
+import com.logaldeveloper.logalbot.utils.TrackUtil;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -43,27 +44,8 @@ public class Queue implements Command {
 			return new CommandResponse("information_source", executor.getAsMention() + ", the queue is empty.");
 		}
 
-		long time = 0;
-		StringBuilder reply = new StringBuilder(executor.getAsMention() + ", the following tracks are in the queue:\n");
-		for (int i = 0; i < 11; i++){
-			try{
-				TrackScheduler.getQueue().get(i); // Attempt to trigger an IndexOutOfBoundsException before we append to the string, otherwise we could get an incomplete track line added.
-				reply.append(EmojiUtil.intToEmoji(i + 1)).append(" **").append(StringUtil.sanatize(TrackScheduler.getQueue().get(i).getInfo().title)).append("** (").append(TimeUtil.formatTime(TrackScheduler.getQueue().get(i).getDuration())).append(")\n");
-				time += TrackScheduler.getQueue().get(i).getInfo().length;
-			} catch (IndexOutOfBoundsException exception){
-				break;
-			}
-		}
-		reply.append(":clock130: Total play time: ").append(TimeUtil.formatTime(time));
-
-		if (TrackScheduler.isQueueLocked()){
-			reply.append("\n:lock: The queue is currently locked.");
-		}
-
-		if (!VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
-			reply.append("\n:headphones: You can listen to these tracks by joining voice channel `").append(AudioUtil.getCurrentVoiceChannel().getName()).append("`.");
-		}
-
-		return new CommandResponse("bookmark_tabs", reply.toString());
+		CommandResponse response = new CommandResponse("bookmark_tabs", executor.getAsMention() + ", the following tracks are in the queue:");
+		response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(TrackScheduler.getQueue()));
+		return response;
 	}
 }

@@ -61,6 +61,7 @@ public class CommandManager {
 			response = new CommandResponse("sos", "Sorry " + executor.getAsMention() + ", but an error occurred while executing your command! Please contact " + executor.getAsMention() + " about this!");
 			response.setDeletionDelay(10, TimeUnit.SECONDS);
 			response.sendResponse(channel);
+			return;
 		}
 
 		if (response != null){

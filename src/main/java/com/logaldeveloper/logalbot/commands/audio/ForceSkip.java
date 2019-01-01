@@ -22,7 +22,7 @@ import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
-import com.logaldeveloper.logalbot.utils.StringUtil;
+import com.logaldeveloper.logalbot.utils.TrackUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -51,6 +51,8 @@ public class ForceSkip implements Command {
 
 		AudioTrack skippedTrack = AudioUtil.getLoadedTrack();
 		TrackScheduler.skipCurrentTrack();
-		return new CommandResponse("gun", executor.getAsMention() + " force skipped **" + StringUtil.sanatize(skippedTrack.getInfo().title) + "**.");
+		CommandResponse response = new CommandResponse("gun", executor.getAsMention() + " force skipped the following track:");
+		response.attachEmbed(TrackUtil.generateTrackInfoEmbed(skippedTrack));
+		return response;
 	}
 }
