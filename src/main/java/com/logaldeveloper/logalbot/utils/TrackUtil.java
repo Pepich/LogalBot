@@ -26,14 +26,14 @@ import java.util.ArrayList;
 public class TrackUtil {
 	public static MessageEmbed generateTrackInfoEmbed(AudioTrack track){
 		EmbedBuilder builder = new EmbedBuilder();
-		builder.addField(StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + TimeUtil.formatTime(track.getDuration()), false);
+		builder.addField(StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
 		return builder.build();
 	}
 
 	public static MessageEmbed generateTrackListInfoEmbed(ArrayList<AudioTrack> tracks){
 		EmbedBuilder builder = new EmbedBuilder();
 		for (AudioTrack track : tracks){
-			builder.addField(StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + TimeUtil.formatTime(track.getDuration()), false);
+			builder.addField(StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
 		}
 		return builder.build();
 	}
