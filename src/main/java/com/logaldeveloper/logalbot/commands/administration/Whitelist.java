@@ -29,10 +29,6 @@ import java.util.concurrent.TimeUnit;
 
 public final class Whitelist implements Command {
 	@Override
-	public void initialize(){
-	}
-
-	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!executor.equals(Main.getOwner())){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.").setDeletionDelay(10, TimeUnit.SECONDS);

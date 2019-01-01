@@ -52,6 +52,11 @@ public final class AudioUtil {
 		guild.getAudioManager().setSelfDeafened(true);
 		schedulers.put(guild.getId(), new TrackScheduler(guild));
 		players.get(guild.getId()).addListener(schedulers.get(guild.getId()));
+
+		setVolume(guild, 10);
+		getTrackScheduler(guild).setQueueLocked(false);
+		setPausedState(guild, false);
+
 		logger.info("Audio environment initialized for guild ID " + guild.getId() + ".");
 	}
 

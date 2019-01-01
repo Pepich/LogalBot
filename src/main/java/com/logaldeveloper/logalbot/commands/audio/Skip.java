@@ -35,11 +35,6 @@ public final class Skip implements Command {
 	private ArrayList<String> skipVotes;
 
 	@Override
-	public void initialize(){
-		skipVotes = new ArrayList<>();
-	}
-
-	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		if (!AudioUtil.isAllowedChannelForAudioCommands(channel)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but audio commands can only be used in text channels named `" + Main.getTextChannelNameForAudioCommands() + "`.").setDeletionDelay(10, TimeUnit.SECONDS);

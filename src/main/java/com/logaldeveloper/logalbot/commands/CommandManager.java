@@ -70,12 +70,7 @@ public final class CommandManager {
 	}
 
 	public static void registerCommand(String command, Command commandObject, boolean mustBeWhitelisted){
-		commandObject.initialize();
 		commandMap.put(command, commandObject);
 		permissionMap.put(command, mustBeWhitelisted);
-	}
-
-	public static void reinitializeCommand(String command){
-		commandMap.get(command).initialize();
 	}
 }

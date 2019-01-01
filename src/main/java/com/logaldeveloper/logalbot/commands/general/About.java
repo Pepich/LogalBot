@@ -24,10 +24,6 @@ import net.dv8tion.jda.core.entities.User;
 
 public final class About implements Command {
 	@Override
-	public void initialize(){
-	}
-
-	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		return new CommandResponse("wave", "Hey there " + executor.getAsMention() + "! I'm " + executor.getJDA().getSelfUser().getName() + ", a bot created by LogalDeveloper.");
 	}

@@ -24,10 +24,6 @@ import net.dv8tion.jda.core.entities.User;
 
 public final class Help implements Command {
 	@Override
-	public void initialize(){
-	}
-
-	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		return new CommandResponse("page_facing_up", executor.getAsMention() + ", you can find the command reference at the following link:\nhttps://logaldeveloper.com/projects/logalbot/command-reference/");
 	}

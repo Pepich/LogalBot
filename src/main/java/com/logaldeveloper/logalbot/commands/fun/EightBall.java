@@ -28,11 +28,10 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public final class EightBall implements Command {
-	private static final ArrayList<String> responses = new ArrayList<>();
-	private static final Random rng = new Random();
+	private final ArrayList<String> responses = new ArrayList<>();
+	private final Random rng = new Random();
 
-	@Override
-	public void initialize(){
+	public EightBall(){
 		responses.add("It is certain");
 		responses.add("It is decidedly so");
 		responses.add("Without a doubt");

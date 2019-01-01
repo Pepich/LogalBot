@@ -115,12 +115,10 @@ public final class TrackScheduler extends AudioEventAdapter {
 	@Override
 	public void onTrackStart(AudioPlayer player, AudioTrack track){
 		logger.info("Track '" + track.getInfo().title + "' has started.");
-		CommandManager.reinitializeCommand("skip");
 		if (idleLogoutTask != null && !idleLogoutTask.isDone()){
 			logger.info("A track has started. Cancelling scheduled disconnect.");
 			idleLogoutTask.cancel(true);
 		}
-
 	}
 
 	@Override
@@ -131,12 +129,11 @@ public final class TrackScheduler extends AudioEventAdapter {
 			AudioUtil.playTrack(guild, queue.get(0));
 			queue.remove(0);
 		} else {
-			CommandManager.reinitializeCommand("volume");
-			CommandManager.reinitializeCommand("lock");
-			CommandManager.reinitializeCommand("pause");
+			AudioUtil.setVolume(guild, 10);
+			AudioUtil.getTrackScheduler(guild).setQueueLocked(false);
+			AudioUtil.setPausedState(guild, false);
 			logger.info("Disconnecting from voice channel '" + VoiceChannelUtil.getCurrentVoiceChannel(guild).getName() + "' in 1 minute...");
 			idleLogoutTask = Scheduler.schedule(new IdleLogoutTask(guild), 1, TimeUnit.MINUTES);
 		}
-		CommandManager.reinitializeCommand("skip");
 	}
 }
