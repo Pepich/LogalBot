@@ -17,83 +17,43 @@
 
 package com.logaldeveloper.logalbot.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.util.HashMap;
+import redis.clients.jedis.Jedis;
 
 public class DataManager {
-	private static final Logger logger = LoggerFactory.getLogger(DataManager.class);
+	private static final String host = System.getenv("REDIS_HOST");
+	private static final String password = System.getenv("REDIS_AUTH");
 
-	private static final String dataDirectory = "data";
-	private static final HashMap<User, HashMap<String, String>> dataCache = new HashMap<>();
+	private static Jedis jedis = new Jedis();
 
-	private static void loadData(User user){
-		File jsonFile = new File(dataDirectory + File.separator + user.getId() + ".json");
+	private static void verifyConnection(){
+		if (!jedis.isConnected()){
+			jedis = new Jedis(host);
 
-		if (jsonFile.exists()){
-			logger.info("Loading data file for '" + user.getName() + "' from '" + jsonFile.getAbsolutePath() + "'...");
-			try (Reader reader = new FileReader(jsonFile.getAbsolutePath())){
-				Gson gson = new GsonBuilder().create();
-				dataCache.put(user, gson.fromJson(reader, new TypeToken<HashMap<String, String>>() {
-				}.getType()));
-			} catch (IOException exception){
-				logger.error("An error occured while loading the data file at '" + jsonFile.getAbsolutePath() + "'!");
-				exception.printStackTrace();
-				return;
+			if (password != null){
+				jedis.auth(password);
 			}
-			logger.info("Load complete.");
-		} else {
-			logger.info("Creating data file for '" + user.getName() + "' at '" + jsonFile.getAbsolutePath() + "'...");
-			dataCache.put(user, new HashMap<>());
-			saveData(user);
 		}
 	}
 
-	private static void saveData(User user){
-		File jsonFile = new File(dataDirectory + File.separator + user.getId() + ".json");
-
-		logger.info("Saving data file for '" + user.getName() + "' at '" + jsonFile.getAbsolutePath() + "'...");
-		try (Writer writer = new FileWriter(jsonFile.getAbsolutePath())){
-			Gson gson = new GsonBuilder().create();
-			gson.toJson(dataCache.get(user), writer);
-		} catch (IOException exception){
-			logger.error("An error occured while saving the data file at '" + jsonFile.getAbsolutePath() + "'!");
-			exception.printStackTrace();
-			return;
-		}
-		logger.info("Save complete.");
+	public static String getUserValue(User user, Guild guild, String key){
+		verifyConnection();
+		return jedis.get("g" + guild.getId() + ":u" + user.getId() + ":" + key);
 	}
 
-	public static String getValue(User user, String key){
-		if (!dataCache.containsKey(user)){
-			loadData(user);
-		}
-
-		return dataCache.get(user).get(key);
+	public static void setUserValue(User user, Guild guild, String key, String value){
+		verifyConnection();
+		jedis.set("g" + guild.getId() + ":u" + user.getId() + ":" + key, value);
 	}
 
-	public static String getValueOrUseDefault(User user, String key, String defaultValue){
-		if (getValue(user, key) == null){
-			setValue(user, key, defaultValue);
-			return defaultValue;
-		} else {
-			return getValue(user, key);
-		}
+	public static String getGuildValue(Guild guild, String key){
+		verifyConnection();
+		return jedis.get("g" + guild.getId() + ":" + key);
 	}
 
-	public static void setValue(User user, String key, String value){
-		if (!dataCache.containsKey(user)){
-			loadData(user);
-		}
-
-		dataCache.get(user).put(key, value);
-
-		saveData(user);
+	public static void setGuildValue(Guild guild, String key, String value){
+		verifyConnection();
+		jedis.set("g" + guild.getId() + ":" + key, value);
 	}
 }

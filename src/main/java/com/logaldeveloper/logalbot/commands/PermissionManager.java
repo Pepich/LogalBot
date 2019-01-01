@@ -17,6 +17,7 @@
 
 package com.logaldeveloper.logalbot.commands;
 
+import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.utils.DataManager;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
@@ -26,20 +27,20 @@ public class PermissionManager {
 	private static final Logger logger = LoggerFactory.getLogger(PermissionManager.class);
 
 	public static boolean isWhitelisted(User user){
-		if (DataManager.getValue(user, "whitelisted") == null){
-			DataManager.setValue(user, "whitelisted", "false");
+		if (DataManager.getUserValue(user, Main.getGuild(), "whitelisted") == null){
+			DataManager.setUserValue(user, Main.getGuild(), "whitelisted", "false");
 		}
 
-		return DataManager.getValue(user, "whitelisted").equals("true");
+		return DataManager.getUserValue(user, Main.getGuild(), "whitelisted").equals("true");
 	}
 
 	public static void addToWhitelist(User user){
-		DataManager.setValue(user, "whitelisted", "true");
+		DataManager.setUserValue(user, Main.getGuild(), "whitelisted", "true");
 		logger.info("'" + user.getName() + "' was added to the whitelist.");
 	}
 
 	public static void removeFromWhitelist(User user){
-		DataManager.setValue(user, "whitelisted", "false");
+		DataManager.setUserValue(user, Main.getGuild(), "whitelisted", "false");
 		logger.info("'" + user.getName() + "' was removed from the whitelist.");
 	}
 }
