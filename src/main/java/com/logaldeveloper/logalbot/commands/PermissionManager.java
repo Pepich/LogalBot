@@ -27,6 +27,10 @@ public final class PermissionManager {
 	private static final Logger logger = LoggerFactory.getLogger(PermissionManager.class);
 
 	public static boolean isWhitelisted(User user, Guild guild){
+		if (guild.getMember(user).isOwner()){
+			return true;
+		}
+
 		if (DataManager.getUserValue(user, guild, "whitelisted") == null){
 			DataManager.setUserValue(user, guild, "whitelisted", "false");
 		}

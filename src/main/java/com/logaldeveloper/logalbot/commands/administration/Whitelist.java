@@ -17,7 +17,6 @@
 
 package com.logaldeveloper.logalbot.commands.administration;
 
-import com.logaldeveloper.logalbot.Main;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
@@ -30,7 +29,8 @@ import java.util.concurrent.TimeUnit;
 public final class Whitelist implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
-		if (!executor.equals(Main.getOwner())){
+		Guild guild = channel.getGuild();
+		if (!guild.getMember(executor).isOwner()){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
@@ -50,15 +50,14 @@ public final class Whitelist implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but that doesn't appear to be a valid user.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (user.equals(Main.getOwner())){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to remove that user from the whitelist.").setDeletionDelay(10, TimeUnit.SECONDS);
+		if (guild.getMember(user).isOwner()){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you cannot remove yourself from the whitelist.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (user.isBot()){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you cannot whitelist bots.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		Guild guild = channel.getGuild();
 		if (PermissionManager.isWhitelisted(user, guild)){
 			PermissionManager.removeFromWhitelist(user, guild);
 			return new CommandResponse("heavy_multiplication_x", executor.getAsMention() + " has removed " + user.getAsMention() + " from the whitelist.");

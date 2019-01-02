@@ -31,7 +31,6 @@ import com.logaldeveloper.logalbot.utils.AudioUtil;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,16 +38,14 @@ import javax.security.auth.login.LoginException;
 
 public final class Main {
 	private static final String token = System.getenv("TOKEN");
-	private static final String ownerUserID = System.getenv("OWNER_USER_ID");
 
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
-	private static JDA jda;
-	private static User owner;
 
 	public static void main(String[] arguments){
 		logger.info("Beginning setup of LogalBot...");
 
 		logger.info("Attempting to log into Discord...");
+		JDA jda = null;
 		try{
 			JDABuilder jdaBuilder = new JDABuilder(AccountType.BOT);
 			jdaBuilder.setAutoReconnect(true);
@@ -65,14 +62,6 @@ public final class Main {
 			System.exit(1);
 		}
 		logger.info("Successfully logged into Discord as bot user '" + jda.getSelfUser().getName() + "'.");
-
-		logger.info("Attempting to find owner user with user ID '" + ownerUserID + "'...");
-		owner = jda.getUserById(ownerUserID);
-		if (owner == null){
-			logger.error("Unable to find owner user! Either the owner is not a member of any guild the bot is a member of, or the user ID specified is invalid!");
-			System.exit(1);
-		}
-		logger.info("Owner is '" + owner.getName() + "'.");
 
 		logger.info("Beginning initialization of LogalBot...");
 		AudioUtil.initializePlayerManager();
@@ -107,9 +96,5 @@ public final class Main {
 		logger.info("Everything seems to be ready! Enabling command listener...");
 		jda.addEventListener(new GuildMessageReceived());
 		logger.info("Initialization complete!");
-	}
-
-	public static User getOwner(){
-		return owner;
 	}
 }
