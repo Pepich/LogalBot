@@ -56,7 +56,7 @@ public final class AudioUtil {
 		getTrackScheduler(guild).setQueueLocked(false);
 		setPausedState(guild, false);
 
-		logger.info("Audio environment initialized for guild ID " + guild.getId() + ".");
+		logger.info("Audio environment initialized for " + guild.getName() + " (" + guild.getId() + ").");
 	}
 
 	public static boolean isInitialized(Guild guild){
@@ -106,9 +106,9 @@ public final class AudioUtil {
 
 	public static void setPausedState(Guild guild, boolean pausedState){
 		if (pausedState){
-			logger.info("The audio player was paused.");
+			logger.info("The audio player was paused in " + guild.getName() + " (" + guild.getId() + ").");
 		} else {
-			logger.info("The audio player was resumed.");
+			logger.info("The audio player was resumed in " + guild.getName() + " (" + guild.getId() + ").");
 		}
 
 		players.get(guild.getId()).setPaused(pausedState);
@@ -119,7 +119,7 @@ public final class AudioUtil {
 	}
 
 	public static void setVolume(Guild guild, int volume){
-		logger.info("The audio player's volume was set to " + volume + "%.");
+		logger.info("The audio player's volume was set to " + volume + "% in " + guild.getName() + " (" + guild.getId() + ").");
 		players.get(guild.getId()).setVolume(volume);
 	}
 

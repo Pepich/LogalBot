@@ -17,6 +17,7 @@
 
 package com.logaldeveloper.logalbot.commands;
 
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
@@ -43,10 +44,11 @@ public final class CommandManager {
 			return;
 		}
 
-		logger.info(executor.getName() + " executed command '" + commandName + "' with arguments '" + String.join(" ", arguments) + "'");
+		logger.info(executor.getName() + " (" + executor.getId() + ") executed command '" + commandName + "' with arguments '" + String.join(" ", arguments) + "'");
 
+		Guild guild = channel.getGuild();
 		if (permissionMap.get(commandName) && !PermissionManager.isWhitelisted(executor, channel.getGuild())){
-			logger.info(executor.getName() + " was denied access to command due to not being on the whitelist.");
+			logger.info(executor.getName() + " (" + executor.getId() + ") was denied access to a command due to not being whitelisted in " + guild.getName() + " (" + guild.getId() + ").");
 			response = new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.");
 			response.setDeletionDelay(10, TimeUnit.SECONDS);
 			response.sendResponse(channel);
@@ -56,9 +58,9 @@ public final class CommandManager {
 		try{
 			response = commandMap.get(commandName).execute(arguments, executor, channel);
 		} catch (Throwable exception){
-			logger.info("An error occured while executing " + executor.getAsMention() + "'s command!");
+			logger.info("An error occured while executing a command for " + executor.getName() + " (" + executor.getId() + ") in " + guild.getName() + " (" + guild.getId() + ").");
 			exception.printStackTrace();
-			response = new CommandResponse("sos", "Sorry " + executor.getAsMention() + ", but an error occurred while executing your command! Please contact " + executor.getAsMention() + " about this!");
+			response = new CommandResponse("sos", "Sorry " + executor.getAsMention() + ", but an error occurred while executing your command! Please contact LogalDeveloper about this!");
 			response.setDeletionDelay(10, TimeUnit.SECONDS);
 			response.sendResponse(channel);
 			return;

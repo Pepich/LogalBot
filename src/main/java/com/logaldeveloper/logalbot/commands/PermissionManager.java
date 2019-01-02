@@ -40,11 +40,11 @@ public final class PermissionManager {
 
 	public static void addToWhitelist(User user, Guild guild){
 		DataManager.setUserValue(user, guild, "whitelisted", "true");
-		logger.info("'" + user.getName() + "' was added to the whitelist.");
+		logger.info(user.getName() + " (" + user.getId() + ") was added to the whitelist in " + guild.getName() + " (" + guild.getId() + ").");
 	}
 
 	public static void removeFromWhitelist(User user, Guild guild){
 		DataManager.setUserValue(user, guild, "whitelisted", "false");
-		logger.info("'" + user.getName() + "' was removed from the whitelist.");
+		logger.info(user.getName() + " (" + user.getId() + ") was removed from the whitelist in " + guild.getName() + " (" + guild.getId() + ").");
 	}
 }

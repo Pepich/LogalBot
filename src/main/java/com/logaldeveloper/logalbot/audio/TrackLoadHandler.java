@@ -170,7 +170,7 @@ public final class TrackLoadHandler implements AudioLoadResultHandler {
 		if (exception.getMessage().equals("Unknown file format.")){
 			response = new CommandResponse("question", "Sorry " + requester.getAsMention() + ", but I do not recognize the format of that track.").setDeletionDelay(10, TimeUnit.SECONDS);
 		} else {
-			logger.error("An error occurred while fetching a track!", exception);
+			logger.error("An error occurred for " + channel.getGuild().getName() + " (" + channel.getGuild().getId() + ") while trying to load a track!", exception);
 			response = new CommandResponse("sos", "Sorry " + requester.getAsMention() + ", but an error occurred while trying to get that track!").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 		response.sendResponse(channel);
