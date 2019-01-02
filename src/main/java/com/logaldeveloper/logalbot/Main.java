@@ -23,10 +23,7 @@ import com.logaldeveloper.logalbot.commands.audio.*;
 import com.logaldeveloper.logalbot.commands.fun.EightBall;
 import com.logaldeveloper.logalbot.commands.general.About;
 import com.logaldeveloper.logalbot.commands.general.Help;
-import com.logaldeveloper.logalbot.events.GuildMessageReceived;
-import com.logaldeveloper.logalbot.events.GuildReady;
-import com.logaldeveloper.logalbot.events.GuildVoiceLeave;
-import com.logaldeveloper.logalbot.events.GuildVoiceMove;
+import com.logaldeveloper.logalbot.events.*;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -67,6 +64,7 @@ public final class Main {
 		AudioUtil.initializePlayerManager();
 
 		logger.info("Registering events...");
+		jda.addEventListener(new GuildJoin());
 		jda.addEventListener(new GuildVoiceLeave());
 		jda.addEventListener(new GuildVoiceMove());
 

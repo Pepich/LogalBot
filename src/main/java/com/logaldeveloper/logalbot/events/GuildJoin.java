@@ -19,12 +19,12 @@ package com.logaldeveloper.logalbot.events;
 
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-public final class GuildReady extends ListenerAdapter {
+public final class GuildJoin extends ListenerAdapter {
 	@Override
-	public void onGuildReady(GuildReadyEvent event){
+	public void onGuildJoin(GuildJoinEvent event){
 		Guild guild = event.getGuild();
 		if (!AudioUtil.isInitialized(guild)){
 			AudioUtil.initialize(guild);
