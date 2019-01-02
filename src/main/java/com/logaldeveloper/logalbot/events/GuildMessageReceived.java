@@ -18,6 +18,7 @@
 package com.logaldeveloper.logalbot.events;
 
 import com.logaldeveloper.logalbot.commands.CommandManager;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.SelfUser;
@@ -42,7 +43,9 @@ public final class GuildMessageReceived extends ListenerAdapter {
 			String[] rawCommand = rawMessage.split(" ");
 			String[] command = Arrays.copyOfRange(rawCommand, 1, rawCommand.length);
 			if (command.length >= 1){
-				message.delete().reason("LogalBot Command Execution").queue();
+				if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_MANAGE)){
+					message.delete().reason("LogalBot Command Execution").queue();
+				}
 				CommandManager.executeCommand(command, event.getAuthor(), event.getChannel());
 			}
 		}
