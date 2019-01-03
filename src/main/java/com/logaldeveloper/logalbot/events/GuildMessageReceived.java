@@ -19,6 +19,7 @@ package com.logaldeveloper.logalbot.events;
 
 import com.logaldeveloper.logalbot.commands.CommandManager;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.SelfUser;
@@ -39,11 +40,12 @@ public final class GuildMessageReceived extends ListenerAdapter {
 		String rawMessage = message.getContentRaw();
 		SelfUser selfUser = event.getJDA().getSelfUser();
 		List<Member> mentionedMembers = message.getMentionedMembers();
-		if (mentionedMembers.size() >= 1 && mentionedMembers.get(0).getUser().getId().equals(selfUser.getId()) && rawMessage.startsWith(selfUser.getAsMention())){
+		Guild guild = event.getGuild();
+		if (mentionedMembers.size() >= 1 && mentionedMembers.get(0).getUser().getId().equals(selfUser.getId()) && rawMessage.startsWith(guild.getSelfMember().getAsMention())){
 			String[] rawCommand = rawMessage.split(" ");
 			String[] command = Arrays.copyOfRange(rawCommand, 1, rawCommand.length);
 			if (command.length >= 1){
-				if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_MANAGE)){
+				if (guild.getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_MANAGE)){
 					message.delete().reason("LogalBot Command Execution").queue();
 				}
 				CommandManager.executeCommand(command, event.getAuthor(), event.getChannel());
