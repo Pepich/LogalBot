@@ -36,7 +36,10 @@ public final class CommandManager {
 	public static void executeCommand(String[] command, User executor, TextChannel channel){
 		String commandName = command[0].toLowerCase();
 		String[] arguments = Arrays.copyOfRange(command, 1, command.length);
+		Guild guild = channel.getGuild();
 		CommandResponse response;
+
+		logger.info(executor.getName() + " (" + executor.getId() + ") executed command '" + commandName + "' with arguments '" + String.join(" ", arguments) + "' in " + guild.getName() + " (" + guild.getId() + ").");
 		if (!commandMap.containsKey(commandName)){
 			response = new CommandResponse("question", "Sorry " + executor.getAsMention() + ", but I do not know what that command is.");
 			response.setDeletionDelay(10, TimeUnit.SECONDS);
@@ -44,9 +47,6 @@ public final class CommandManager {
 			return;
 		}
 
-		logger.info(executor.getName() + " (" + executor.getId() + ") executed command '" + commandName + "' with arguments '" + String.join(" ", arguments) + "'");
-
-		Guild guild = channel.getGuild();
 		if (permissionMap.get(commandName) && !PermissionManager.isWhitelisted(executor, channel.getGuild())){
 			logger.info(executor.getName() + " (" + executor.getId() + ") was denied access to a command due to not being whitelisted in " + guild.getName() + " (" + guild.getId() + ").");
 			response = new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.");
