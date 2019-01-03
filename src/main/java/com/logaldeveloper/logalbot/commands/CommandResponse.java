@@ -52,16 +52,18 @@ public final class CommandResponse {
 
 	public void sendResponse(TextChannel channel){
 		MessageBuilder builder = new MessageBuilder();
-		builder.setContent(":" + emoji + ": " + response);
+		builder.setContent(":" + this.emoji + ": " + this.response);
 
 		if (this.responseEmbed != null){
 			builder.setEmbed(this.responseEmbed);
 		}
 
-		Message responseMessage = channel.sendMessage(builder.build()).complete();
+		channel.sendMessage(builder.build()).queue(this::handleResponseCreation);
+	}
 
-		if ((deletionDelay != 0) && (deletionDelayUnit != null)){
-			Scheduler.schedule(new MessageDeleteTask(responseMessage), deletionDelay, deletionDelayUnit);
+	private void handleResponseCreation(Message message){
+		if ((this.deletionDelay != 0) && (this.deletionDelayUnit != null)){
+			Scheduler.schedule(new MessageDeleteTask(message), this.deletionDelay, this.deletionDelayUnit);
 		}
 	}
 }
