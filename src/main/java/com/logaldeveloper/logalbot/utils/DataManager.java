@@ -24,6 +24,7 @@ import redis.clients.jedis.Jedis;
 public final class DataManager {
 	private static final String host = System.getenv("REDIS_HOST");
 	private static final String password = System.getenv("REDIS_AUTH");
+	private static final String databaseNumber = System.getenv("REDIS_DATABASE_NUMBER");
 
 	private static Jedis jedis = new Jedis();
 
@@ -33,6 +34,11 @@ public final class DataManager {
 
 			if (password != null){
 				jedis.auth(password);
+			}
+
+			if (databaseNumber != null){
+				int num = Integer.parseInt(databaseNumber);
+				jedis.select(num);
 			}
 		}
 	}
