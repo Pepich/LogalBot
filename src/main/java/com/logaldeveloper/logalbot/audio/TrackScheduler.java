@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class TrackScheduler extends AudioEventAdapter {
 	private final Guild guild;
-	private final ArrayList<AudioTrack> queue = new ArrayList<>(0);
+	private final ArrayList<AudioTrack> queue = new ArrayList<>(10);
 	private final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
 	private boolean queueLocked = false;
 	private ScheduledFuture idleLogoutTask;
