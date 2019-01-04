@@ -59,10 +59,6 @@ public final class AudioUtil {
 		logger.info("Audio environment initialized for " + guild.getName() + " (" + guild.getId() + ").");
 	}
 
-	public static boolean isInitialized(Guild guild){
-		return ((players.get(guild.getId()) != null) && (schedulers.get(guild.getId()) != null));
-	}
-
 	public static VoiceChannel getCurrentVoiceChannel(Guild guild){
 		return guild.getAudioManager().getConnectedChannel();
 	}

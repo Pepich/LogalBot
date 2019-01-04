@@ -32,9 +32,8 @@ public final class GuildJoin extends ListenerAdapter {
 	@Override
 	public void onGuildJoin(GuildJoinEvent event){
 		Guild guild = event.getGuild();
-		if (!AudioUtil.isInitialized(guild)){
-			AudioUtil.initialize(guild);
-		}
+
+		AudioUtil.initialize(guild);
 
 		if (DataManager.getGuildValue(guild, "known") == null){
 			DataManager.setGuildValue(guild, "known", "true");
@@ -50,6 +49,7 @@ public final class GuildJoin extends ListenerAdapter {
 			for (TextChannel channel : guild.getTextChannels()){
 				if (guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE)){
 					channel.sendMessage(builder.build()).queue();
+
 					break;
 				}
 			}
