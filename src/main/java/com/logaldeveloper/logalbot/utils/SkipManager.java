@@ -42,7 +42,11 @@ public class SkipManager {
 	}
 
 	public static void resetVotes(Guild guild){
-		skipVotesDictionary.put(guild.getId(), new ArrayList<>());
+		if (skipVotesDictionary.containsKey(guild.getId())){
+			skipVotesDictionary.get(guild.getId()).clear();
+		} else {
+			skipVotesDictionary.put(guild.getId(), new ArrayList<>());
+		}
 	}
 
 	public static boolean shouldSkip(Guild guild){
