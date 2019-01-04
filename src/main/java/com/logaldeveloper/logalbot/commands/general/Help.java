@@ -19,12 +19,20 @@ package com.logaldeveloper.logalbot.commands.general;
 
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
 public final class Help implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
-		return new CommandResponse("page_facing_up", executor.getAsMention() + ", you can find the command reference at the following link:\nhttps://logaldeveloper.com/projects/logalbot/command-reference/");
+		EmbedBuilder builder = new EmbedBuilder();
+		builder.addField(":desktop: Repository", "https://github.com/LogalDeveloper/LogalBot", false);
+		builder.addField(":page_facing_up: Command Reference", "https://logaldeveloper.com/projects/logalbot/command-reference/", false);
+		builder.addField(":bug: Issue Tracker", "https://github.com/LogalDeveloper/LogalBot/issues", false);
+
+		CommandResponse response = new CommandResponse("link", executor.getAsMention() + ", here are some helpful links:");
+		response.attachEmbed(builder.build());
+		return response;
 	}
 }
