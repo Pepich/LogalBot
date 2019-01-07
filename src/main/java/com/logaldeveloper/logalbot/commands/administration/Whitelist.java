@@ -20,6 +20,7 @@ package com.logaldeveloper.logalbot.commands.administration;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -30,7 +31,7 @@ public final class Whitelist implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		Guild guild = channel.getGuild();
-		if (!guild.getMember(executor).isOwner()){
+		if (!guild.getMember(executor).hasPermission(Permission.ADMINISTRATOR)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 

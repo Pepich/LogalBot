@@ -18,6 +18,7 @@
 package com.logaldeveloper.logalbot.commands;
 
 import com.logaldeveloper.logalbot.utils.DataManager;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public final class PermissionManager {
 	private static final Logger logger = LoggerFactory.getLogger(PermissionManager.class);
 
 	public static boolean isWhitelisted(User user, Guild guild){
-		if (guild.getMember(user).isOwner()){
+		if (guild.getMember(user).hasPermission(Permission.ADMINISTRATOR)){
 			return true;
 		}
 

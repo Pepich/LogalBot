@@ -44,7 +44,7 @@ public final class GuildJoin extends ListenerAdapter {
 			builder.append("\n\nYou can tell me what to do by prefixing a message with a direct mention to me followed by a command word and any arguments for it. Here's an example:");
 			builder.append("\n`@").append(self.getName()).append("#").append(self.getDiscriminator()).append(" 8ball Is it rewind time?`");
 			builder.append("\nYou can find a list of commands I know about here: https://logaldeveloper.com/projects/logalbot/command-reference/");
-			builder.append("\n\nBy default, I only allow ").append(event.getGuild().getOwner().getAsMention()).append(" to run important commands, but you can ask them to add you to my whitelist where I will also allow you to run those commands.");
+			builder.append("\n\nBy default, I only allow guild administrators to run administrative commands, but you can ask them to add you to my whitelist where I will also allow you to run those commands.");
 
 			for (TextChannel channel : guild.getTextChannels()){
 				if (guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE)){
