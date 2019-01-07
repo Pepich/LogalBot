@@ -22,9 +22,11 @@ import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -42,8 +44,13 @@ public final class Play implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel(channel.getGuild()).getName() + "` in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (VoiceChannelUtil.getCurrentVoiceChannelFromUser(guild, executor) == null){
+		VoiceChannel targetChannel = VoiceChannelUtil.getCurrentVoiceChannelFromUser(guild, executor);
+		if (targetChannel == null){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in a voice channel in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
+		}
+
+		if (!guild.getSelfMember().hasPermission(targetChannel, Permission.VOICE_CONNECT) || !guild.getSelfMember().hasPermission(targetChannel, Permission.VOICE_SPEAK)){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but I do not have the required permissions to use your current voice channel.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (arguments.length == 0){
