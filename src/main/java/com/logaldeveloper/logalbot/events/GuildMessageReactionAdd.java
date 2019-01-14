@@ -15,21 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.logaldeveloper.logalbot.tasks;
+package com.logaldeveloper.logalbot.events;
 
 import com.logaldeveloper.logalbot.utils.ReactionCallbackManager;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-public final class MessageDeleteTask implements Runnable {
-	private final Message messageToDelete;
-
-	public MessageDeleteTask(Message message){
-		this.messageToDelete = message;
-	}
-
+public final class GuildMessageReactionAdd extends ListenerAdapter {
 	@Override
-	public void run(){
-		ReactionCallbackManager.unregisterMessage(messageToDelete.getId());
-		messageToDelete.delete().queue();
+	public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event){
+		if (!event.getUser().equals(event.getJDA().getSelfUser())){
+			ReactionCallbackManager.executeCallback(event.getMessageId(), event.getUser(), event.getReactionEmote().getName());
+		}
 	}
 }

@@ -67,6 +67,7 @@ public final class Main {
 		jda.addEventListener(new GuildJoin());
 		jda.addEventListener(new GuildVoiceLeave());
 		jda.addEventListener(new GuildVoiceMove());
+		jda.addEventListener(new GuildMessageReactionAdd());
 
 		logger.info("Registering commands...");
 		// General Commands

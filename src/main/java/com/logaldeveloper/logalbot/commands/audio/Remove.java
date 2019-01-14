@@ -19,8 +19,11 @@ package com.logaldeveloper.logalbot.commands.audio;
 
 import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
+import com.logaldeveloper.logalbot.commands.CommandManager;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
+import com.logaldeveloper.logalbot.utils.ReactionCallbackManager;
+import com.logaldeveloper.logalbot.utils.StringUtil;
 import com.logaldeveloper.logalbot.utils.TrackUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -31,8 +34,26 @@ import java.util.concurrent.TimeUnit;
 public final class Remove implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
+		TrackScheduler scheduler = AudioUtil.getTrackScheduler(channel.getGuild());
+		if (scheduler.isQueueEmpty()){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there are no tracks in the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
+		}
+
 		if (arguments.length == 0){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must provide an index.").setDeletionDelay(10, TimeUnit.SECONDS);
+			CommandResponse response = new CommandResponse("question", executor.getAsMention() + ", which track would you like to remove from the queue?");
+			response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(scheduler.getQueue()));
+
+			for (int i = 0; i < scheduler.getQueue().size(); i++){
+				final int trackNumber = i + 1;
+				response.addReactionCallback(StringUtil.intToUnicodeEmoji(trackNumber), (reactor, messageID) -> {
+					ReactionCallbackManager.unregisterMessage(messageID);
+					CommandManager.executeCommand(("remove " + trackNumber).split(" "), reactor, channel);
+				});
+			}
+
+			response.setReactionCallbackTarget(executor);
+			response.setDeletionDelay(30, TimeUnit.SECONDS);
+			return response;
 		}
 
 		int index;
@@ -43,7 +64,6 @@ public final class Remove implements Command {
 		}
 
 		try{
-			TrackScheduler scheduler = AudioUtil.getTrackScheduler(channel.getGuild());
 			AudioTrack removedTrack = scheduler.getQueue().get(index - 1);
 
 			scheduler.removeFromQueue(index - 1);

@@ -15,21 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.logaldeveloper.logalbot.tasks;
+package com.logaldeveloper.logalbot.commands;
 
-import com.logaldeveloper.logalbot.utils.ReactionCallbackManager;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 
-public final class MessageDeleteTask implements Runnable {
-	private final Message messageToDelete;
-
-	public MessageDeleteTask(Message message){
-		this.messageToDelete = message;
-	}
-
-	@Override
-	public void run(){
-		ReactionCallbackManager.unregisterMessage(messageToDelete.getId());
-		messageToDelete.delete().queue();
-	}
+public interface ReactionCallback {
+	void run(User reactor, String messageID);
 }
