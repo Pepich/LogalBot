@@ -22,7 +22,7 @@ import net.dv8tion.jda.core.entities.User;
 
 import java.util.HashMap;
 
-public class ReactionCallbackManager {
+public final class ReactionCallbackManager {
 	private static HashMap<String, HashMap<String, ReactionCallback>> callbackDictonary = new HashMap<>();
 	private static HashMap<String, String> targetDictonary = new HashMap<>();
 

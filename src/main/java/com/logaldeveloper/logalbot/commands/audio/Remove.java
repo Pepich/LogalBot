@@ -41,7 +41,7 @@ public final class Remove implements Command {
 
 		if (arguments.length == 0){
 			CommandResponse response = new CommandResponse("question", executor.getAsMention() + ", which track would you like to remove from the queue?");
-			response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(scheduler.getQueue()));
+			response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(scheduler.getQueue(), true));
 
 			for (int i = 0; i < scheduler.getQueue().size(); i++){
 				final int trackNumber = i + 1;

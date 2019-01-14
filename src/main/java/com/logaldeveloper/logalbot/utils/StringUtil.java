@@ -55,9 +55,38 @@ public final class StringUtil {
 			case 8:
 				return "8⃣";
 			case 9:
-				return "9️⃣";
+				return "9⃣";
 			case 10:
 				return "\uD83D\uDD1F";
+			default:
+				return "";
+		}
+	}
+
+	public static String intToEmoji(int number){
+		switch (number){
+			case 0:
+				return ":zero:";
+			case 1:
+				return ":one:";
+			case 2:
+				return ":two:";
+			case 3:
+				return ":three:";
+			case 4:
+				return ":four:";
+			case 5:
+				return ":five:";
+			case 6:
+				return ":six:";
+			case 7:
+				return ":seven:";
+			case 8:
+				return ":eight:";
+			case 9:
+				return ":nine:";
+			case 10:
+				return ":keycap_ten:";
 			default:
 				return "";
 		}

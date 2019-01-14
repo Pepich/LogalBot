@@ -30,10 +30,17 @@ public final class TrackUtil {
 		return builder.build();
 	}
 
-	public static MessageEmbed generateTrackListInfoEmbed(ArrayList<AudioTrack> tracks){
+	public static MessageEmbed generateTrackListInfoEmbed(ArrayList<AudioTrack> tracks, boolean numbered){
 		EmbedBuilder builder = new EmbedBuilder();
+		int i = 1;
 		for (AudioTrack track : tracks){
-			builder.addField(StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
+			if (numbered){
+				builder.addField(StringUtil.intToEmoji(i) + " " + StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
+				i++;
+			} else {
+				builder.addField(StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
+			}
+
 		}
 		return builder.build();
 	}

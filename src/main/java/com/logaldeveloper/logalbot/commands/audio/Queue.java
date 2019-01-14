@@ -34,7 +34,7 @@ public final class Queue implements Command {
 		}
 
 		CommandResponse response = new CommandResponse("bookmark_tabs", executor.getAsMention() + ", the following tracks are in the queue:");
-		response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(AudioUtil.getTrackScheduler(guild).getQueue()));
+		response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(AudioUtil.getTrackScheduler(guild).getQueue(), false));
 		return response;
 	}
 }

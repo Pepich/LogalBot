@@ -149,7 +149,7 @@ public final class TrackLoadHandler implements AudioLoadResultHandler {
 				}
 
 				response = new CommandResponse("notes", requester.getAsMention() + " added the following tracks to the queue:");
-				response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(addedTracks));
+				response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(addedTracks, false));
 				response.sendResponse(channel);
 			} else {
 				response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but you are not allowed to add playlists to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
