@@ -40,6 +40,7 @@ public final class ReactionCallbackManager {
 
 	public static void unregisterMessage(String messageID){
 		callbackDictonary.remove(messageID);
+		targetDictonary.remove(messageID);
 	}
 
 	public static void executeCallback(String messageID, User reactor, String emoji){
