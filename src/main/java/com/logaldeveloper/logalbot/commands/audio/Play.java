@@ -36,10 +36,6 @@ public final class Play implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		Guild guild = channel.getGuild();
-		if (AudioUtil.getTrackScheduler(guild).isQueueLocked() && !PermissionManager.isWhitelisted(executor, guild)){
-			return new CommandResponse("lock", "Sorry " + executor.getAsMention() + ", but the queue is locked.").setDeletionDelay(10, TimeUnit.SECONDS);
-		}
-
 		if (AudioUtil.isTrackLoaded(guild) && !VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel(channel.getGuild()).getName() + "` in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
@@ -55,6 +51,10 @@ public final class Play implements Command {
 
 		if (arguments.length == 0){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to provide a search query or a link to a specific track or playlist.").setDeletionDelay(10, TimeUnit.SECONDS);
+		}
+
+		if (AudioUtil.getTrackScheduler(guild).isQueueLocked() && !PermissionManager.isWhitelisted(executor, guild)){
+			return new CommandResponse("lock", "Sorry " + executor.getAsMention() + ", but the queue is locked.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		boolean isLink;

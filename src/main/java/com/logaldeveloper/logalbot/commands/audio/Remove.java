@@ -21,11 +21,9 @@ import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandManager;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
-import com.logaldeveloper.logalbot.utils.AudioUtil;
-import com.logaldeveloper.logalbot.utils.ReactionCallbackManager;
-import com.logaldeveloper.logalbot.utils.StringUtil;
-import com.logaldeveloper.logalbot.utils.TrackUtil;
+import com.logaldeveloper.logalbot.utils.*;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -37,6 +35,11 @@ public final class Remove implements Command {
 		TrackScheduler scheduler = AudioUtil.getTrackScheduler(channel.getGuild());
 		if (scheduler.isQueueEmpty()){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there are no tracks in the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
+		}
+
+		Guild guild = channel.getGuild();
+		if (AudioUtil.isTrackLoaded(guild) && !VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel(guild).getName() + "` in order to remove tracks from the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (arguments.length == 0){

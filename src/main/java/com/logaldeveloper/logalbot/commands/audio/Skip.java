@@ -38,7 +38,7 @@ public final class Skip implements Command {
 		}
 
 		if (!VoiceChannelUtil.isInCurrentVoiceChannel(channel.getGuild(), executor)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(channel.getGuild()).getName() + "` in order to vote to skip tracks.").setDeletionDelay(10, TimeUnit.SECONDS);
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(channel.getGuild()).getName() + "` in order to vote to skip the current track.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		Guild guild = channel.getGuild();

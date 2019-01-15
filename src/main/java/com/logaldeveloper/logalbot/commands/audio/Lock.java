@@ -21,13 +21,26 @@ import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
+import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+
+import java.util.concurrent.TimeUnit;
 
 public final class Lock implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
-		TrackScheduler scheduler = AudioUtil.getTrackScheduler(channel.getGuild());
+		Guild guild = channel.getGuild();
+		if (!AudioUtil.isTrackLoaded(guild)){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to lock or unlock the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
+		}
+
+		if (!VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(guild).getName() + "` in order to lock or unlock the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
+		}
+
+		TrackScheduler scheduler = AudioUtil.getTrackScheduler(guild);
 		if (scheduler.isQueueLocked()){
 			scheduler.setQueueLocked(false);
 			return new CommandResponse("unlock", executor.getAsMention() + " unlocked the queue.");

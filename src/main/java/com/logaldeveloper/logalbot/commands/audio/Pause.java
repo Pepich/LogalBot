@@ -32,11 +32,11 @@ public final class Pause implements Command {
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		Guild guild = channel.getGuild();
 		if (!AudioUtil.isTrackLoaded(guild)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to pause or resume the player.").setDeletionDelay(10, TimeUnit.SECONDS);
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to pause or resume the track player.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (!VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(guild).getName() + "` in order to pause or unplause the player.").setDeletionDelay(10, TimeUnit.SECONDS);
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(guild).getName() + "` in order to pause or resume the track player.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (AudioUtil.isPlayerPaused(guild)){
