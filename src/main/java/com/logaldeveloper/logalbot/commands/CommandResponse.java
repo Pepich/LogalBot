@@ -33,9 +33,8 @@ import java.util.concurrent.TimeUnit;
 public final class CommandResponse {
 	private final String emoji;
 	private final String response;
+	private final LinkedHashMap<String, ReactionCallback> callbacks = new LinkedHashMap<>();
 	private MessageEmbed responseEmbed;
-
-	private LinkedHashMap<String, ReactionCallback> callbacks = new LinkedHashMap<>();
 	private User callbacksTarget;
 
 	private long deletionDelay = 0;

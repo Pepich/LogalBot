@@ -23,34 +23,34 @@ import net.dv8tion.jda.core.entities.User;
 import java.util.HashMap;
 
 public final class ReactionCallbackManager {
-	private static HashMap<String, HashMap<String, ReactionCallback>> callbackDictonary = new HashMap<>();
-	private static HashMap<String, String> targetDictonary = new HashMap<>();
+	private static final HashMap<String, HashMap<String, ReactionCallback>> callbackDictionary = new HashMap<>();
+	private static final HashMap<String, String> targetDictionary = new HashMap<>();
 
 	public static void registerCallback(String messageID, String emoji, ReactionCallback callback){
-		if (!callbackDictonary.containsKey(messageID)){
-			callbackDictonary.put(messageID, new HashMap<>());
+		if (!callbackDictionary.containsKey(messageID)){
+			callbackDictionary.put(messageID, new HashMap<>());
 		}
 
-		callbackDictonary.get(messageID).put(emoji, callback);
+		callbackDictionary.get(messageID).put(emoji, callback);
 	}
 
 	public static void setCallbackTarget(User user, String messageID){
-		targetDictonary.put(messageID, user.getId());
+		targetDictionary.put(messageID, user.getId());
 	}
 
 	public static void unregisterMessage(String messageID){
-		callbackDictonary.remove(messageID);
-		targetDictonary.remove(messageID);
+		callbackDictionary.remove(messageID);
+		targetDictionary.remove(messageID);
 	}
 
 	public static void executeCallback(String messageID, User reactor, String emoji){
-		if (callbackDictonary.containsKey(messageID)){
-			if (targetDictonary.containsKey(messageID) && !targetDictonary.get(messageID).equals(reactor.getId())){
+		if (callbackDictionary.containsKey(messageID)){
+			if (targetDictionary.containsKey(messageID) && !targetDictionary.get(messageID).equals(reactor.getId())){
 				return;
 			}
 
-			if (callbackDictonary.get(messageID).containsKey(emoji)){
-				callbackDictonary.get(messageID).get(emoji).run(reactor, messageID);
+			if (callbackDictionary.get(messageID).containsKey(emoji)){
+				callbackDictionary.get(messageID).get(emoji).run(reactor, messageID);
 			}
 		}
 	}

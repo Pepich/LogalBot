@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public final class TrackUtil {
 	public static MessageEmbed generateTrackInfoEmbed(AudioTrack track){
 		EmbedBuilder builder = new EmbedBuilder();
-		builder.addField(StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
+		builder.addField(StringUtil.sanitize(track.getInfo().title), StringUtil.sanitize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
 		return builder.build();
 	}
 
@@ -35,10 +35,10 @@ public final class TrackUtil {
 		int i = 1;
 		for (AudioTrack track : tracks){
 			if (numbered){
-				builder.addField(StringUtil.intToEmoji(i) + " " + StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
+				builder.addField(StringUtil.intToEmoji(i) + " " + StringUtil.sanitize(track.getInfo().title), StringUtil.sanitize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
 				i++;
 			} else {
-				builder.addField(StringUtil.sanatize(track.getInfo().title), StringUtil.sanatize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
+				builder.addField(StringUtil.sanitize(track.getInfo().title), StringUtil.sanitize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
 			}
 
 		}

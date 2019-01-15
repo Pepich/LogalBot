@@ -18,11 +18,11 @@
 package com.logaldeveloper.logalbot.utils;
 
 public final class StringUtil {
-	public static String sanatize(String string){
+	public static String sanitize(String string){
 		return string.replaceAll("([_*`<@>~])", "\\\\$1").replaceAll("[\r\n]", "");
 	}
 
-	public static String sanatizeCodeBlock(String string){
+	public static String sanitizeCodeBlock(String string){
 		return string.replaceAll("[`]", "'").replaceAll("[\r\n]", "");
 	}
 

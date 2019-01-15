@@ -23,7 +23,7 @@ import net.dv8tion.jda.core.entities.User;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SkipManager {
+public final class SkipManager {
 	private static final HashMap<String, ArrayList<String>> skipVotesDictionary = new HashMap<>();
 
 	public static void registerVote(Guild guild, User user){

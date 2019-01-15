@@ -62,7 +62,7 @@ public final class EightBall implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry, " + executor.getAsMention() + ", but you need to supply a question for the Magic 8 Ball.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		String question = StringUtil.sanatizeCodeBlock(String.join(" ", arguments));
+		String question = StringUtil.sanitizeCodeBlock(String.join(" ", arguments));
 
 		return new CommandResponse("question", executor.getAsMention() + " asked the Magic 8 Ball: `" + question + "`\n:8ball: The Magic 8 Ball responds: *" + responses.get(rng.nextInt(responses.size())) + "*.");
 	}

@@ -40,7 +40,7 @@ public final class GuildJoin extends ListenerAdapter {
 
 			SelfUser self = event.getJDA().getSelfUser();
 			MessageBuilder builder = new MessageBuilder();
-			builder.append(":wave: Hello there members of ").append(StringUtil.sanatize(guild.getName())).append("! I'm ").append(self.getName()).append(", and I'm glad to be here to serve all of you.");
+			builder.append(":wave: Hello there members of ").append(StringUtil.sanitize(guild.getName())).append("! I'm ").append(self.getName()).append(", and I'm glad to be here to serve all of you.");
 			builder.append("\n\nYou can tell me what to do by prefixing a message with a direct mention to me followed by a command word and any arguments for it. Here's an example:");
 			builder.append("\n`@").append(self.getName()).append("#").append(self.getDiscriminator()).append(" 8ball Is it rewind time?`");
 			builder.append("\nYou can find a list of commands I know about here: https://logaldeveloper.com/projects/logalbot/command-reference/");

@@ -54,7 +54,7 @@ public final class Main {
 			logger.error("The token specified is not valid.");
 			System.exit(1);
 		} catch (Throwable exception){
-			logger.error("An error occured while attempting to set up JDA!");
+			logger.error("An error occurred while attempting to set up JDA!");
 			exception.printStackTrace();
 			System.exit(1);
 		}

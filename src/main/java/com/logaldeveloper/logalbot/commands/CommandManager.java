@@ -58,7 +58,7 @@ public final class CommandManager {
 		try{
 			response = commandMap.get(commandName).execute(arguments, executor, channel);
 		} catch (Throwable exception){
-			logger.info("An error occured while executing a command for " + executor.getName() + " (" + executor.getId() + ") in " + guild.getName() + " (" + guild.getId() + ").");
+			logger.info("An error occurred while executing a command for " + executor.getName() + " (" + executor.getId() + ") in " + guild.getName() + " (" + guild.getId() + ").");
 			exception.printStackTrace();
 			response = new CommandResponse("sos", "Sorry " + executor.getAsMention() + ", but an error occurred while executing your command! Please contact LogalDeveloper about this!");
 			response.setDeletionDelay(10, TimeUnit.SECONDS);
