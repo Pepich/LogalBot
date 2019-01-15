@@ -26,7 +26,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +35,7 @@ public final class CommandResponse {
 	private final String response;
 	private MessageEmbed responseEmbed;
 
-	private HashMap<String, ReactionCallback> callbacks = new HashMap<>();
+	private LinkedHashMap<String, ReactionCallback> callbacks = new LinkedHashMap<>();
 	private User callbacksTarget;
 
 	private long deletionDelay = 0;
