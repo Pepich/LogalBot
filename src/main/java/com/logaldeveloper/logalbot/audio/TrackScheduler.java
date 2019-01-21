@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -99,6 +100,10 @@ public final class TrackScheduler extends AudioEventAdapter {
 
 	public void clearQueue(){
 		queue.clear();
+	}
+
+	public void shuffleQueue(){
+		Collections.shuffle(queue);
 	}
 
 	public ArrayList<AudioTrack> getQueue(){

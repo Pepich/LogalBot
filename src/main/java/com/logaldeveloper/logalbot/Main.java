@@ -88,6 +88,7 @@ public final class Main {
 		CommandManager.registerCommand("reset", new Reset(), true);
 		CommandManager.registerCommand("skip", new Skip(), false);
 		CommandManager.registerCommand("volume", new Volume(), true);
+		CommandManager.registerCommand("shuffle", new Shuffle(), true);
 
 		// Administration Commands
 		CommandManager.registerCommand("whitelist", new Whitelist(), true);
