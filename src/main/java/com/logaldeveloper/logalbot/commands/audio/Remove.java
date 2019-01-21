@@ -21,9 +21,11 @@ import com.logaldeveloper.logalbot.audio.TrackScheduler;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandManager;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
+import com.logaldeveloper.logalbot.commands.ReactionCallback;
 import com.logaldeveloper.logalbot.utils.*;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -48,9 +50,17 @@ public final class Remove implements Command {
 
 			for (int i = 0; i < scheduler.getQueue().size(); i++){
 				final int trackNumber = i + 1;
-				response.addReactionCallback(StringUtil.intToUnicodeEmoji(trackNumber), (reactor, messageID) -> {
-					ReactionCallbackManager.unregisterMessage(messageID);
-					CommandManager.executeCommand(("remove " + trackNumber).split(" "), reactor, channel);
+				response.addReactionCallback(StringUtil.intToUnicodeEmoji(trackNumber), new ReactionCallback() {
+					@Override
+					public void run(User reactor, String messageID){
+						ReactionCallbackManager.unregisterMessage(messageID);
+						channel.getMessageById(messageID).queue(this::removeReactions);
+						CommandManager.executeCommand(("remove " + trackNumber).split(" "), reactor, channel);
+					}
+
+					private void removeReactions(Message message){
+						message.clearReactions().queue();
+					}
 				});
 			}
 
