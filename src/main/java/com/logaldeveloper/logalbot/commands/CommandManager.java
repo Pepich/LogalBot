@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 public final class CommandManager {
 	private static final HashMap<String, Command> commandMap = new HashMap<>();
 	private static final HashMap<String, Boolean> permissionMap = new HashMap<>();
+	private static final HashMap<String, String> aliasMap = new HashMap<>();
 
 	private static final Logger logger = LoggerFactory.getLogger(CommandManager.class);
 
@@ -38,6 +39,10 @@ public final class CommandManager {
 		String[] arguments = Arrays.copyOfRange(command, 1, command.length);
 		Guild guild = channel.getGuild();
 		CommandResponse response;
+
+		if (aliasMap.containsKey(commandName)){
+			commandName = aliasMap.get(commandName);
+		}
 
 		logger.info(executor.getName() + " (" + executor.getId() + ") executed command '" + commandName + "' with arguments '" + String.join(" ", arguments) + "' in " + guild.getName() + " (" + guild.getId() + ").");
 		if (!commandMap.containsKey(commandName)){
@@ -74,5 +79,9 @@ public final class CommandManager {
 	public static void registerCommand(String command, Command commandObject, boolean mustBeWhitelisted){
 		commandMap.put(command, commandObject);
 		permissionMap.put(command, mustBeWhitelisted);
+	}
+
+	public static void registerCommandAlias(String alias, String command){
+		aliasMap.put(alias, command);
 	}
 }

@@ -79,19 +79,31 @@ public final class Main {
 
 		// Audio Commands
 		CommandManager.registerCommand("forceskip", new ForceSkip(), true);
+		CommandManager.registerCommandAlias("fs", "forceskip");
 		CommandManager.registerCommand("lock", new Lock(), true);
+		CommandManager.registerCommandAlias("l", "lock");
 		CommandManager.registerCommand("nowplaying", new NowPlaying(), false);
+		CommandManager.registerCommandAlias("np", "nowplaying");
 		CommandManager.registerCommand("pause", new Pause(), true);
 		CommandManager.registerCommand("play", new Play(), false);
+		CommandManager.registerCommandAlias("p", "play");
+		CommandManager.registerCommandAlias("add", "play");
+		CommandManager.registerCommandAlias("a", "play");
 		CommandManager.registerCommand("queue", new Queue(), false);
+		CommandManager.registerCommandAlias("q", "queue");
 		CommandManager.registerCommand("remove", new Remove(), true);
+		CommandManager.registerCommandAlias("r", "remove");
+		CommandManager.registerCommandAlias("x", "remove");
 		CommandManager.registerCommand("reset", new Reset(), true);
 		CommandManager.registerCommand("skip", new Skip(), false);
+		CommandManager.registerCommandAlias("s", "skip");
 		CommandManager.registerCommand("volume", new Volume(), true);
+		CommandManager.registerCommandAlias("v", "volume");
 		CommandManager.registerCommand("shuffle", new Shuffle(), true);
 
 		// Administration Commands
 		CommandManager.registerCommand("whitelist", new Whitelist(), true);
+		CommandManager.registerCommandAlias("wl", "whitelist");
 
 		logger.info("Everything seems to be ready! Enabling command listener...");
 		jda.addEventListener(new GuildMessageReceived());
