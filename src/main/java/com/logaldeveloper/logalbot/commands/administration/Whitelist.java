@@ -22,6 +22,7 @@ import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.commands.PermissionManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -31,7 +32,8 @@ public final class Whitelist implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
 		Guild guild = channel.getGuild();
-		if (!guild.getMember(executor).hasPermission(Permission.ADMINISTRATOR)){
+		Member member = guild.getMember(executor);
+		if (!member.hasPermission(Permission.ADMINISTRATOR)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
@@ -51,8 +53,8 @@ public final class Whitelist implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but that doesn't appear to be a valid user.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (guild.getMember(user).isOwner()){
-			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you cannot remove yourself from the whitelist.").setDeletionDelay(10, TimeUnit.SECONDS);
+		if (member.hasPermission(Permission.ADMINISTRATOR)){
+			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you cannot remove that user from the whitelist due to them being a guild administrator.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		if (user.isBot()){
