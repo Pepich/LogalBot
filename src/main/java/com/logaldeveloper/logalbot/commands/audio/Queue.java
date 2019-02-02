@@ -25,6 +25,8 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
+import java.util.concurrent.TimeUnit;
+
 public final class Queue implements Command {
 	@Override
 	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
@@ -34,7 +36,19 @@ public final class Queue implements Command {
 		}
 
 		CommandResponse response = new CommandResponse("bookmark_tabs", executor.getAsMention() + ", the following tracks are in the queue:");
-		response.attachEmbed(TrackUtil.generateTrackListInfoEmbed(AudioUtil.getTrackScheduler(guild).getQueue(), false));
+
+		int page;
+		if (arguments.length == 0){
+			page = 1;
+		} else {
+			try{
+				page = Integer.parseInt(arguments[0]);
+			} catch (NumberFormatException exception){
+				return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but the page number must be an integer.").setDeletionDelay(10, TimeUnit.SECONDS);
+			}
+		}
+
+		response.attachEmbed(TrackUtil.generatePaginatedTrackListInfoEmbed(AudioUtil.getTrackScheduler(guild).getQueue(), page));
 		return response;
 	}
 }

@@ -21,7 +21,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public final class TrackUtil {
 	public static MessageEmbed generateTrackInfoEmbed(AudioTrack track){
@@ -30,18 +30,42 @@ public final class TrackUtil {
 		return builder.build();
 	}
 
-	public static MessageEmbed generateTrackListInfoEmbed(ArrayList<AudioTrack> tracks, boolean numbered){
+	public static MessageEmbed generateTrackListInfoEmbed(List<AudioTrack> tracks, boolean numbered){
 		EmbedBuilder builder = new EmbedBuilder();
-		int i = 1;
-		for (AudioTrack track : tracks){
+
+		for (int i = 0; i < tracks.size(); i++){
+			if (i == 10){
+				break;
+			}
+
+			AudioTrack track = tracks.get(i);
 			if (numbered){
-				builder.addField(StringUtil.intToEmoji(i) + " " + StringUtil.sanitize(track.getInfo().title), StringUtil.sanitize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
-				i++;
+				builder.addField("**" + (i + 1) + ":** " + StringUtil.sanitize(track.getInfo().title), StringUtil.sanitize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
 			} else {
 				builder.addField(StringUtil.sanitize(track.getInfo().title), StringUtil.sanitize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
 			}
-
 		}
+
+		if (tracks.size() > 10){
+			builder.setTitle("**Top 10 Tracks - " + (tracks.size() - 10) + " Not Shown**");
+		}
+		return builder.build();
+	}
+
+	public static MessageEmbed generatePaginatedTrackListInfoEmbed(List<AudioTrack> tracks, int page){
+		EmbedBuilder builder = new EmbedBuilder();
+
+		page = page - 1;
+		int start = page * 10;
+		int end = start + 10;
+		int pages = (int) Math.ceil(tracks.size() / 10d);
+
+		for (int i = start; i < end && i < tracks.size(); i++){
+			AudioTrack track = tracks.get(i);
+			builder.addField("**" + (i + 1) + ":** " + StringUtil.sanitize(track.getInfo().title), StringUtil.sanitize(track.getInfo().author) + " - " + StringUtil.formatTime(track.getDuration()), false);
+		}
+
+		builder.setTitle("**" + tracks.size() + " Total Tracks - Page " + (page + 1) + "/" + pages + "**");
 		return builder.build();
 	}
 }
