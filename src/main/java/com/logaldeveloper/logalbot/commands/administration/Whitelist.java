@@ -53,7 +53,7 @@ public final class Whitelist implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but that doesn't appear to be a valid user.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (member.hasPermission(Permission.ADMINISTRATOR)){
+		if (guild.getMember(user).hasPermission(Permission.ADMINISTRATOR)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you cannot remove that user from the whitelist due to them being a guild administrator.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
