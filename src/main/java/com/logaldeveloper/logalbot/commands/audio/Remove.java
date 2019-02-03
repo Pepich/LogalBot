@@ -48,6 +48,10 @@ public final class Remove implements Command {
 
 			for (int i = 0; i < scheduler.getQueue().size(); i++){
 				final int trackNumber = i + 1;
+				if (trackNumber == 11){
+					break;
+				}
+
 				response.addReactionCallback(StringUtil.intToUnicodeEmoji(trackNumber), (reactor, messageID) -> {
 					ReactionCallbackManager.unregisterMessage(messageID);
 					CommandManager.executeCommand(("remove " + trackNumber).split(" "), reactor, channel);
