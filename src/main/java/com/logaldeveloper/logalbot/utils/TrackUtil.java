@@ -55,10 +55,19 @@ public final class TrackUtil {
 	public static MessageEmbed generatePaginatedTrackListInfoEmbed(List<AudioTrack> tracks, int page){
 		EmbedBuilder builder = new EmbedBuilder();
 
+		if (page < 1){
+			page = 1;
+		}
+
+		int pages = (int) Math.ceil(tracks.size() / 10d);
+
+		if (page > pages){
+			page = pages;
+		}
+
 		page = page - 1;
 		int start = page * 10;
 		int end = start + 10;
-		int pages = (int) Math.ceil(tracks.size() / 10d);
 
 		for (int i = start; i < end && i < tracks.size(); i++){
 			AudioTrack track = tracks.get(i);
