@@ -17,8 +17,8 @@
 
 package com.logaldeveloper.logalbot.commands;
 
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.Member;
 
 public interface ReactionCallback {
-	void run(User reactor, String messageID);
+	void run(Member member, String messageID);
 }

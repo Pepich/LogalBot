@@ -19,7 +19,10 @@ package com.logaldeveloper.logalbot.events;
 
 import com.logaldeveloper.logalbot.commands.CommandManager;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.SelfUser;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -29,24 +32,24 @@ import java.util.List;
 public final class GuildMessageReceived extends ListenerAdapter {
 	@Override
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-		Guild guild = event.getGuild();
+		Member self = event.getGuild().getSelfMember();
 		TextChannel channel = event.getChannel();
-		if (event.getAuthor().isBot() || event.getMessage().isTTS() || !guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE)){
+		if (event.getAuthor().isBot() || event.getMessage().isTTS() || !self.hasPermission(channel, Permission.MESSAGE_WRITE)){
 			return;
 		}
 
 		Message message = event.getMessage();
-		String rawMessage = message.getContentRaw();
+		String content = message.getContentRaw();
 		SelfUser selfUser = event.getJDA().getSelfUser();
 		List<Member> mentionedMembers = message.getMentionedMembers();
-		if (mentionedMembers.size() >= 1 && mentionedMembers.get(0).getUser().getId().equals(selfUser.getId()) && rawMessage.startsWith(guild.getSelfMember().getAsMention())){
-			String[] rawCommand = rawMessage.split(" ");
+		if (mentionedMembers.size() >= 1 && mentionedMembers.get(0).getUser().getId().equals(selfUser.getId()) && content.startsWith(self.getAsMention())){
+			String[] rawCommand = content.split(" ");
 			String[] command = Arrays.copyOfRange(rawCommand, 1, rawCommand.length);
 			if (command.length >= 1){
-				if (guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_MANAGE)){
+				if (self.hasPermission(channel, Permission.MESSAGE_MANAGE)){
 					message.delete().reason("LogalBot Command Execution").queue();
 				}
-				CommandManager.executeCommand(command, event.getAuthor(), channel);
+				CommandManager.executeCommand(command, event.getMember(), channel);
 			}
 		}
 	}

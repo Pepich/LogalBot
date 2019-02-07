@@ -25,28 +25,28 @@ import com.logaldeveloper.logalbot.utils.TrackUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 import java.util.concurrent.TimeUnit;
 
 public final class Skip implements Command {
 	@Override
-	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, Member executor, TextChannel channel){
 		if (!AudioUtil.isTrackLoaded(channel.getGuild())){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to vote to skip it.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (!VoiceChannelUtil.isInCurrentVoiceChannel(channel.getGuild(), executor)){
+		if (!VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(channel.getGuild()).getName() + "` in order to vote to skip the current track.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		Guild guild = channel.getGuild();
-		if (SkipManager.hasVoted(guild, executor)){
+		if (SkipManager.hasVoted(executor)){
 			return new CommandResponse("no_entry_sign", "You have already voted to skip this track " + executor.getAsMention() + ".").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		SkipManager.registerVote(guild, executor);
+		SkipManager.registerVote(executor);
 		if (SkipManager.shouldSkip(guild)){
 			AudioTrack skippedTrack = AudioUtil.getLoadedTrack(guild);
 			AudioUtil.getTrackScheduler(guild).skipCurrentTrack();

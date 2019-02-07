@@ -22,12 +22,12 @@ import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.TrackUtil;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 public final class NowPlaying implements Command {
 	@Override
-	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, Member executor, TextChannel channel){
 		Guild guild = channel.getGuild();
 		if (!AudioUtil.isTrackLoaded(guild)){
 			return new CommandResponse("mute", executor.getAsMention() + ", there is nothing currently playing.");

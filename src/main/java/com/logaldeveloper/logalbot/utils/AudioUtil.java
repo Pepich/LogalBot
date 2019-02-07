@@ -26,8 +26,8 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.managers.AudioManager;
 import org.slf4j.Logger;
@@ -119,7 +119,7 @@ public final class AudioUtil {
 		players.get(guild.getId()).setVolume(volume);
 	}
 
-	public static void findTrack(String query, User requester, TextChannel channel){
+	public static void findTrack(String query, Member requester, TextChannel channel){
 		playerManager.loadItem(query, new TrackLoadHandler(requester, channel));
 	}
 

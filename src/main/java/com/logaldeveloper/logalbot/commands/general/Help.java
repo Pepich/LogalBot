@@ -20,12 +20,12 @@ package com.logaldeveloper.logalbot.commands.general;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 public final class Help implements Command {
 	@Override
-	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, Member executor, TextChannel channel){
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.addField(":desktop: Repository", "https://github.com/LogalDeveloper/LogalBot", false);
 		builder.addField(":page_facing_up: Command Reference", "https://logaldeveloper.com/projects/logalbot/command-reference/", false);

@@ -24,21 +24,21 @@ import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.*;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 import java.util.concurrent.TimeUnit;
 
 public final class Remove implements Command {
 	@Override
-	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, Member executor, TextChannel channel){
 		TrackScheduler scheduler = AudioUtil.getTrackScheduler(channel.getGuild());
 		if (scheduler.isQueueEmpty()){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there are no tracks in the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
 		Guild guild = channel.getGuild();
-		if (AudioUtil.isTrackLoaded(guild) && !VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
+		if (AudioUtil.isTrackLoaded(guild) && !VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel(guild).getName() + "` in order to remove tracks from the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 

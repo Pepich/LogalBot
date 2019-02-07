@@ -18,7 +18,7 @@
 package com.logaldeveloper.logalbot.utils;
 
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.Member;
 import redis.clients.jedis.Jedis;
 
 public final class DataManager {
@@ -43,14 +43,14 @@ public final class DataManager {
 		}
 	}
 
-	public static String getUserValue(User user, Guild guild, String key){
+	public static String getUserValue(Member member, String key){
 		verifyConnection();
-		return jedis.get("g" + guild.getId() + ":u" + user.getId() + ":" + key);
+		return jedis.get("g" + member.getGuild().getId() + ":u" + member.getUser().getId() + ":" + key);
 	}
 
-	public static void setUserValue(User user, Guild guild, String key, String value){
+	public static void setUserValue(Member member, String key, String value){
 		verifyConnection();
-		jedis.set("g" + guild.getId() + ":u" + user.getId() + ":" + key, value);
+		jedis.set("g" + member.getGuild().getId() + ":u" + member.getUser().getId() + ":" + key, value);
 	}
 
 	public static String getGuildValue(Guild guild, String key){

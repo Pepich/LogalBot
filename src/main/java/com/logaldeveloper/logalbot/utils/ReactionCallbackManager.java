@@ -18,7 +18,7 @@
 package com.logaldeveloper.logalbot.utils;
 
 import com.logaldeveloper.logalbot.commands.ReactionCallback;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.Member;
 
 import java.util.HashMap;
 
@@ -34,8 +34,8 @@ public final class ReactionCallbackManager {
 		callbackDictionary.get(messageID).put(emoji, callback);
 	}
 
-	public static void setCallbackTarget(User user, String messageID){
-		targetDictionary.put(messageID, user.getId());
+	public static void setCallbackTarget(Member member, String messageID){
+		targetDictionary.put(messageID, member.getUser().getId());
 	}
 
 	public static void unregisterMessage(String messageID){
@@ -43,9 +43,9 @@ public final class ReactionCallbackManager {
 		targetDictionary.remove(messageID);
 	}
 
-	public static void executeCallback(String messageID, User reactor, String emoji){
+	public static void executeCallback(String messageID, Member reactor, String emoji){
 		if (callbackDictionary.containsKey(messageID)){
-			if (targetDictionary.containsKey(messageID) && !targetDictionary.get(messageID).equals(reactor.getId())){
+			if (targetDictionary.containsKey(messageID) && !targetDictionary.get(messageID).equals(reactor.getUser().getId())){
 				return;
 			}
 

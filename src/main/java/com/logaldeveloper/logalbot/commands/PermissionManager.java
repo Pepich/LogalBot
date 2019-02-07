@@ -19,33 +19,32 @@ package com.logaldeveloper.logalbot.commands;
 
 import com.logaldeveloper.logalbot.utils.DataManager;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class PermissionManager {
 	private static final Logger logger = LoggerFactory.getLogger(PermissionManager.class);
 
-	public static boolean isWhitelisted(User user, Guild guild){
-		if (guild.getMember(user).hasPermission(Permission.ADMINISTRATOR)){
+	public static boolean isWhitelisted(Member member){
+		if (member.hasPermission(Permission.ADMINISTRATOR)){
 			return true;
 		}
 
-		if (DataManager.getUserValue(user, guild, "whitelisted") == null){
-			DataManager.setUserValue(user, guild, "whitelisted", "false");
+		if (DataManager.getUserValue(member, "whitelisted") == null){
+			DataManager.setUserValue(member, "whitelisted", "false");
 		}
 
-		return DataManager.getUserValue(user, guild, "whitelisted").equals("true");
+		return DataManager.getUserValue(member, "whitelisted").equals("true");
 	}
 
-	public static void addToWhitelist(User user, Guild guild){
-		DataManager.setUserValue(user, guild, "whitelisted", "true");
-		logger.info(user.getName() + " (" + user.getId() + ") was added to the whitelist in " + guild.getName() + " (" + guild.getId() + ").");
+	public static void addToWhitelist(Member member){
+		DataManager.setUserValue(member, "whitelisted", "true");
+		logger.info(member.getEffectiveName() + " (" + member.getUser().getId() + ") was added to the whitelist in " + member.getGuild().getName() + " (" + member.getGuild().getId() + ").");
 	}
 
-	public static void removeFromWhitelist(User user, Guild guild){
-		DataManager.setUserValue(user, guild, "whitelisted", "false");
-		logger.info(user.getName() + " (" + user.getId() + ") was removed from the whitelist in " + guild.getName() + " (" + guild.getId() + ").");
+	public static void removeFromWhitelist(Member member){
+		DataManager.setUserValue(member, "whitelisted", "false");
+		logger.info(member.getEffectiveName() + " (" + member.getUser().getId() + ") was removed from the whitelist in " + member.getGuild().getName() + " (" + member.getGuild().getId() + ").");
 	}
 }

@@ -18,7 +18,7 @@
 package com.logaldeveloper.logalbot.utils;
 
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 public final class VoiceChannelUtil {
 	private static final Logger logger = LoggerFactory.getLogger(VoiceChannelUtil.class);
 
-	public static VoiceChannel getCurrentVoiceChannelFromUser(Guild guild, User user){
-		for (VoiceChannel channel : guild.getVoiceChannels()){
-			if (channel.getMembers().contains(guild.getMember(user))){
+	public static VoiceChannel getCurrentVoiceChannelFromMember(Member member){
+		for (VoiceChannel channel : member.getGuild().getVoiceChannels()){
+			if (channel.getMembers().contains(member)){
 				return channel;
 			}
 		}
@@ -40,8 +40,8 @@ public final class VoiceChannelUtil {
 	}
 
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-	public static boolean isInCurrentVoiceChannel(Guild guild, User user){
-		return VoiceChannelUtil.getCurrentVoiceChannel(guild).getMembers().contains(guild.getMember(user));
+	public static boolean isInCurrentVoiceChannel(Member member){
+		return VoiceChannelUtil.getCurrentVoiceChannel(member.getGuild()).getMembers().contains(member);
 	}
 
 	public static void joinVoiceChannel(VoiceChannel channel){

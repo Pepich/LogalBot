@@ -28,6 +28,7 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +50,8 @@ public final class TrackScheduler extends AudioEventAdapter {
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	public void addToQueue(AudioTrack track, User requester){
-		if (this.queueLocked && !PermissionManager.isWhitelisted(requester, guild)){
+	public void addToQueue(AudioTrack track, Member requester){
+		if (this.queueLocked && !PermissionManager.isWhitelisted(requester)){
 			return;
 		}
 
@@ -58,11 +59,11 @@ public final class TrackScheduler extends AudioEventAdapter {
 			return;
 		}
 
-		this.logger.info(requester.getName() + " (" + requester.getId() + ") added '" + track.getInfo().title + "' to the queue in " + guild.getName() + " (" + guild.getId() + ").");
+		this.logger.info(requester.getEffectiveName() + " (" + requester.getUser().getId() + ") added '" + track.getInfo().title + "' to the queue in " + guild.getName() + " (" + guild.getId() + ").");
 		this.queue.add(track);
 		if (!AudioUtil.isTrackLoaded(this.guild)){
 			// The inspector is suppressed here because the play command checks if the executor is in a voice channel before addToQueue is called.
-			VoiceChannelUtil.joinVoiceChannel(VoiceChannelUtil.getCurrentVoiceChannelFromUser(this.guild, requester));
+			VoiceChannelUtil.joinVoiceChannel(VoiceChannelUtil.getCurrentVoiceChannelFromMember(requester));
 			AudioUtil.playTrack(this.guild, this.queue.remove(0));
 		}
 	}

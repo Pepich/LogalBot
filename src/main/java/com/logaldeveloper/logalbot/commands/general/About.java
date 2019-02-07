@@ -19,12 +19,12 @@ package com.logaldeveloper.logalbot.commands.general;
 
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 public final class About implements Command {
 	@Override
-	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, Member executor, TextChannel channel){
 		return new CommandResponse("wave", "Hey there " + executor.getAsMention() + "! I'm " + executor.getJDA().getSelfUser().getName() + ", a bot created by LogalDeveloper.");
 	}
 }

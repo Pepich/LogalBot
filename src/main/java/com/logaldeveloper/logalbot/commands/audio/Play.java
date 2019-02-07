@@ -24,8 +24,8 @@ import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 
 import java.net.MalformedURLException;
@@ -34,13 +34,13 @@ import java.util.concurrent.TimeUnit;
 
 public final class Play implements Command {
 	@Override
-	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, Member executor, TextChannel channel){
 		Guild guild = channel.getGuild();
-		if (AudioUtil.isTrackLoaded(guild) && !VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
+		if (AudioUtil.isTrackLoaded(guild) && !VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in voice channel `" + VoiceChannelUtil.getCurrentVoiceChannel(channel.getGuild()).getName() + "` in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		VoiceChannel targetChannel = VoiceChannelUtil.getCurrentVoiceChannelFromUser(guild, executor);
+		VoiceChannel targetChannel = VoiceChannelUtil.getCurrentVoiceChannelFromMember(executor);
 		if (targetChannel == null){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to be in a voice channel in order to add songs to the queue.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
@@ -53,7 +53,7 @@ public final class Play implements Command {
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you need to provide a search query or a link to a specific track or playlist.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (AudioUtil.getTrackScheduler(guild).isQueueLocked() && !PermissionManager.isWhitelisted(executor, guild)){
+		if (AudioUtil.getTrackScheduler(guild).isQueueLocked() && !PermissionManager.isWhitelisted(executor)){
 			return new CommandResponse("lock", "Sorry " + executor.getAsMention() + ", but the queue is locked.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 

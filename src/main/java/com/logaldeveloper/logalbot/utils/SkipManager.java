@@ -18,7 +18,7 @@
 package com.logaldeveloper.logalbot.utils;
 
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.Member;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,19 +26,19 @@ import java.util.HashMap;
 public final class SkipManager {
 	private static final HashMap<String, ArrayList<String>> skipVotesDictionary = new HashMap<>();
 
-	public static void registerVote(Guild guild, User user){
-		if (!skipVotesDictionary.containsKey(guild.getId())){
-			resetVotes(guild);
+	public static void registerVote(Member member){
+		if (!skipVotesDictionary.containsKey(member.getGuild().getId())){
+			resetVotes(member.getGuild());
 		}
 
-		ArrayList<String> registeredVotes = skipVotesDictionary.get(guild.getId());
-		if (!registeredVotes.contains(user.getId())){
-			registeredVotes.add(user.getId());
+		ArrayList<String> registeredVotes = skipVotesDictionary.get(member.getGuild().getId());
+		if (!registeredVotes.contains(member.getUser().getId())){
+			registeredVotes.add(member.getUser().getId());
 		}
 	}
 
-	public static boolean hasVoted(Guild guild, User user){
-		return skipVotesDictionary.get(guild.getId()).contains(user.getId());
+	public static boolean hasVoted(Member member){
+		return skipVotesDictionary.get(member.getGuild().getId()).contains(member.getUser().getId());
 	}
 
 	public static void resetVotes(Guild guild){

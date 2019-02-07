@@ -17,9 +17,9 @@
 
 package com.logaldeveloper.logalbot.commands;
 
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 public interface Command {
-	CommandResponse execute(String[] arguments, User executor, TextChannel channel);
+	CommandResponse execute(String[] arguments, Member executor, TextChannel channel);
 }

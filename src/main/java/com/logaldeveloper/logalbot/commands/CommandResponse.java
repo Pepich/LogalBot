@@ -21,10 +21,10 @@ import com.logaldeveloper.logalbot.tasks.MessageDeleteTask;
 import com.logaldeveloper.logalbot.utils.ReactionCallbackManager;
 import com.logaldeveloper.logalbot.utils.Scheduler;
 import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -35,7 +35,7 @@ public final class CommandResponse {
 	private final String response;
 	private final LinkedHashMap<String, ReactionCallback> callbacks = new LinkedHashMap<>();
 	private MessageEmbed responseEmbed;
-	private User callbacksTarget;
+	private Member callbacksTarget;
 
 	private long deletionDelay = 0;
 	private TimeUnit deletionDelayUnit;
@@ -61,8 +61,8 @@ public final class CommandResponse {
 		return this;
 	}
 
-	public CommandResponse setReactionCallbackTarget(User user){
-		this.callbacksTarget = user;
+	public CommandResponse setReactionCallbackTarget(Member member){
+		this.callbacksTarget = member;
 		return this;
 	}
 

@@ -20,8 +20,8 @@ package com.logaldeveloper.logalbot.commands.fun;
 import com.logaldeveloper.logalbot.commands.Command;
 import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.StringUtil;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -57,7 +57,7 @@ public final class EightBall implements Command {
 	}
 
 	@Override
-	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, Member executor, TextChannel channel){
 		if (arguments.length == 0){
 			return new CommandResponse("no_entry_sign", "Sorry, " + executor.getAsMention() + ", but you need to supply a question for the Magic 8 Ball.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}

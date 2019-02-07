@@ -26,6 +26,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
@@ -36,10 +37,10 @@ import java.util.concurrent.TimeUnit;
 
 public final class TrackLoadHandler implements AudioLoadResultHandler {
 	private final Logger logger = LoggerFactory.getLogger(TrackLoadHandler.class);
-	private final User requester;
+	private final Member requester;
 	private final TextChannel channel;
 
-	public TrackLoadHandler(User requester, TextChannel channel){
+	public TrackLoadHandler(Member requester, TextChannel channel){
 		this.requester = requester;
 		this.channel = channel;
 	}
@@ -62,7 +63,7 @@ public final class TrackLoadHandler implements AudioLoadResultHandler {
 			return;
 		}
 
-		if ((track.getInfo().length <= 60000 || track.getInfo().length >= 900000) && !PermissionManager.isWhitelisted(requester, guild)){
+		if ((track.getInfo().length <= 60000 || track.getInfo().length >= 900000) && !PermissionManager.isWhitelisted(requester)){
 			response = new CommandResponse("no_entry_sign", "Sorry " + requester.getAsMention() + ", but you can only add tracks between 1 and 15 minutes in length.").setDeletionDelay(10, TimeUnit.SECONDS);
 			response.sendResponse(channel);
 			return;
@@ -113,7 +114,7 @@ public final class TrackLoadHandler implements AudioLoadResultHandler {
 				return;
 			}
 
-			if (PermissionManager.isWhitelisted(requester, guild)){
+			if (PermissionManager.isWhitelisted(requester)){
 				scheduler.addToQueue(track, requester);
 				response = new CommandResponse("notes", requester.getAsMention() + " added the following track to the queue:");
 				response.attachEmbed(TrackUtil.generateTrackInfoEmbed(track));
@@ -130,7 +131,7 @@ public final class TrackLoadHandler implements AudioLoadResultHandler {
 				}
 			}
 		} else {
-			if (PermissionManager.isWhitelisted(requester, guild)){
+			if (PermissionManager.isWhitelisted(requester)){
 				ArrayList<AudioTrack> addedTracks = new ArrayList<>();
 				for (AudioTrack playlistTrack : playlist.getTracks()){
 					if (!scheduler.isQueueFull()){

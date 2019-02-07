@@ -22,20 +22,20 @@ import com.logaldeveloper.logalbot.commands.CommandResponse;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
 import com.logaldeveloper.logalbot.utils.VoiceChannelUtil;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 import java.util.concurrent.TimeUnit;
 
 public final class Pause implements Command {
 	@Override
-	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, Member executor, TextChannel channel){
 		Guild guild = channel.getGuild();
 		if (!AudioUtil.isTrackLoaded(guild)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but there must be a track playing in order to pause or resume the track player.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (!VoiceChannelUtil.isInCurrentVoiceChannel(guild, executor)){
+		if (!VoiceChannelUtil.isInCurrentVoiceChannel(executor)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you must be in voice channel `" + AudioUtil.getCurrentVoiceChannel(guild).getName() + "` in order to pause or resume the track player.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 

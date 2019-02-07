@@ -18,8 +18,8 @@
 package com.logaldeveloper.logalbot.commands;
 
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public final class CommandManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(CommandManager.class);
 
-	public static void executeCommand(String[] command, User executor, TextChannel channel){
+	public static void executeCommand(String[] command, Member executor, TextChannel channel){
 		String commandName = command[0].toLowerCase();
 		String[] arguments = Arrays.copyOfRange(command, 1, command.length);
 		Guild guild = channel.getGuild();
@@ -44,7 +44,7 @@ public final class CommandManager {
 			commandName = aliasMap.get(commandName);
 		}
 
-		logger.info(executor.getName() + " (" + executor.getId() + ") executed command '" + commandName + "' with arguments '" + String.join(" ", arguments) + "' in " + guild.getName() + " (" + guild.getId() + ").");
+		logger.info(executor.getEffectiveName() + " (" + executor.getUser().getId() + ") executed command '" + commandName + "' with arguments '" + String.join(" ", arguments) + "' in " + guild.getName() + " (" + guild.getId() + ").");
 		if (!commandMap.containsKey(commandName)){
 			response = new CommandResponse("question", "Sorry " + executor.getAsMention() + ", but I do not know what that command is.");
 			response.setDeletionDelay(10, TimeUnit.SECONDS);
@@ -52,8 +52,8 @@ public final class CommandManager {
 			return;
 		}
 
-		if (permissionMap.get(commandName) && !PermissionManager.isWhitelisted(executor, channel.getGuild())){
-			logger.info(executor.getName() + " (" + executor.getId() + ") was denied access to a command due to not being whitelisted in " + guild.getName() + " (" + guild.getId() + ").");
+		if (permissionMap.get(commandName) && !PermissionManager.isWhitelisted(executor)){
+			logger.info(executor.getEffectiveName() + " (" + executor.getUser().getId() + ") was denied access to a command due to not being whitelisted in " + guild.getName() + " (" + guild.getId() + ").");
 			response = new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.");
 			response.setDeletionDelay(10, TimeUnit.SECONDS);
 			response.sendResponse(channel);
@@ -63,7 +63,7 @@ public final class CommandManager {
 		try{
 			response = commandMap.get(commandName).execute(arguments, executor, channel);
 		} catch (Throwable exception){
-			logger.info("An error occurred while executing a command for " + executor.getName() + " (" + executor.getId() + ") in " + guild.getName() + " (" + guild.getId() + ").");
+			logger.info("An error occurred while executing a command for " + executor.getEffectiveName() + " (" + executor.getUser().getId() + ") in " + guild.getName() + " (" + guild.getId() + ").");
 			exception.printStackTrace();
 			response = new CommandResponse("sos", "Sorry " + executor.getAsMention() + ", but an error occurred while executing your command! Please contact LogalDeveloper about this!");
 			response.setDeletionDelay(10, TimeUnit.SECONDS);

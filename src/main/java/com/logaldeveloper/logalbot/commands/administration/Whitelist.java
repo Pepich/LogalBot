@@ -24,16 +24,14 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 
 import java.util.concurrent.TimeUnit;
 
 public final class Whitelist implements Command {
 	@Override
-	public CommandResponse execute(String[] arguments, User executor, TextChannel channel){
+	public CommandResponse execute(String[] arguments, Member executor, TextChannel channel){
 		Guild guild = channel.getGuild();
-		Member member = guild.getMember(executor);
-		if (!member.hasPermission(Permission.ADMINISTRATOR)){
+		if (!executor.hasPermission(Permission.ADMINISTRATOR)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you are not allowed to use this command.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
@@ -42,31 +40,31 @@ public final class Whitelist implements Command {
 		}
 
 		String userID = arguments[0].replaceFirst("<@[!]?([0-9]*)>", "$1");
-		User user;
+		Member member;
 		try{
-			user = channel.getJDA().getUserById(userID);
+			member = guild.getMemberById(userID);
 		} catch (Throwable exception){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but that doesn't appear to be a valid user.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (user == null){
+		if (member == null){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but that doesn't appear to be a valid user.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (guild.getMember(user).hasPermission(Permission.ADMINISTRATOR)){
+		if (member.hasPermission(Permission.ADMINISTRATOR)){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you cannot remove that user from the whitelist due to them being a guild administrator.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (user.isBot()){
+		if (member.getUser().isBot()){
 			return new CommandResponse("no_entry_sign", "Sorry " + executor.getAsMention() + ", but you cannot whitelist bots.").setDeletionDelay(10, TimeUnit.SECONDS);
 		}
 
-		if (PermissionManager.isWhitelisted(user, guild)){
-			PermissionManager.removeFromWhitelist(user, guild);
-			return new CommandResponse("heavy_multiplication_x", executor.getAsMention() + " has removed " + user.getAsMention() + " from the whitelist.");
+		if (PermissionManager.isWhitelisted(member)){
+			PermissionManager.removeFromWhitelist(member);
+			return new CommandResponse("heavy_multiplication_x", executor.getAsMention() + " has removed " + member.getAsMention() + " from the whitelist.");
 		} else {
-			PermissionManager.addToWhitelist(user, guild);
-			return new CommandResponse("heavy_check_mark", executor.getAsMention() + " has added " + user.getAsMention() + " to the whitelist.");
+			PermissionManager.addToWhitelist(member);
+			return new CommandResponse("heavy_check_mark", executor.getAsMention() + " has added " + member.getAsMention() + " to the whitelist.");
 		}
 	}
 }

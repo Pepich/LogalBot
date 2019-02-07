@@ -25,7 +25,7 @@ public final class GuildMessageReactionAdd extends ListenerAdapter {
 	@Override
 	public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event){
 		if (!event.getUser().equals(event.getJDA().getSelfUser())){
-			ReactionCallbackManager.executeCallback(event.getMessageId(), event.getUser(), event.getReactionEmote().getName());
+			ReactionCallbackManager.executeCallback(event.getMessageId(), event.getMember(), event.getReactionEmote().getName());
 		}
 	}
 }
