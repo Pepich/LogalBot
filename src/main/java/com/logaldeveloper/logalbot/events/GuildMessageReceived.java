@@ -49,6 +49,7 @@ public final class GuildMessageReceived extends ListenerAdapter {
 				if (self.hasPermission(channel, Permission.MESSAGE_MANAGE)){
 					message.delete().reason("LogalBot Command Execution").queue();
 				}
+				channel.sendTyping().queue();
 				CommandManager.executeCommand(command, event.getMember(), channel);
 			}
 		}
