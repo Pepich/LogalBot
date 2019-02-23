@@ -25,6 +25,7 @@ import com.logaldeveloper.logalbot.commands.general.About;
 import com.logaldeveloper.logalbot.commands.general.Help;
 import com.logaldeveloper.logalbot.events.*;
 import com.logaldeveloper.logalbot.utils.AudioUtil;
+import com.logaldeveloper.logalbot.utils.DataManager;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -40,6 +41,22 @@ public final class Main {
 
 	public static void main(String[] arguments){
 		logger.info("Beginning setup of LogalBot...");
+
+		logger.info("Verifying connection to Redis...");
+		try{
+			DataManager.verifyConnection();
+		} catch (Throwable exception){
+			logger.error("An error occurred while attempting to verify the connection to Redis!", exception);
+			System.exit(1);
+		}
+
+		logger.info("Running any needed schema migrations...");
+		try{
+			DataManager.runMigrations();
+		} catch (Throwable exception){
+			logger.error("An error occurred while attempting to migrate the database!", exception);
+			System.exit(1);
+		}
 
 		logger.info("Attempting to log into Discord...");
 		JDA jda = null;

@@ -19,16 +19,18 @@ package com.logaldeveloper.logalbot.utils;
 
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 
 public final class DataManager {
 	private static final String host = System.getenv("REDIS_HOST");
 	private static final String password = System.getenv("REDIS_AUTH");
 	private static final String databaseNumber = System.getenv("REDIS_DATABASE_NUMBER");
-
+	private static final Logger logger = LoggerFactory.getLogger(DataManager.class);
 	private static Jedis jedis = new Jedis();
 
-	private static void verifyConnection(){
+	public static void verifyConnection(){
 		if (!jedis.isConnected()){
 			jedis = new Jedis(host);
 
@@ -40,6 +42,16 @@ public final class DataManager {
 				int num = Integer.parseInt(databaseNumber);
 				jedis.select(num);
 			}
+		}
+	}
+
+	public static void runMigrations(){
+		verifyConnection();
+
+		if (jedis.get("schemaVersion") == null){
+			logger.info("Migrating schema to version 1...");
+			jedis.set("schemaVersion", "1");
+			logger.info("Migration to schema version 1 complete.");
 		}
 	}
 
@@ -61,5 +73,15 @@ public final class DataManager {
 	public static void setGuildValue(Guild guild, String key, String value){
 		verifyConnection();
 		jedis.set("g" + guild.getId() + ":" + key, value);
+	}
+
+	public static void deleteUserKey(Member member, String key){
+		verifyConnection();
+		jedis.del("g" + member.getGuild().getId() + ":u" + member.getUser().getId() + ":" + key);
+	}
+
+	public static void deleteGuildKey(Guild guild, String key){
+		verifyConnection();
+		jedis.del("g" + guild.getId() + ":" + key);
 	}
 }
