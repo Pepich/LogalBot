@@ -18,6 +18,7 @@
 package com.logaldeveloper.logalbot;
 
 import com.logaldeveloper.logalbot.commands.CommandManager;
+import com.logaldeveloper.logalbot.commands.administration.Settings;
 import com.logaldeveloper.logalbot.commands.administration.Whitelist;
 import com.logaldeveloper.logalbot.commands.audio.*;
 import com.logaldeveloper.logalbot.commands.fun.EightBall;
@@ -121,6 +122,10 @@ public final class Main {
 		// Administration Commands
 		CommandManager.registerCommand("whitelist", new Whitelist(), true);
 		CommandManager.registerCommandAlias("wl", "whitelist");
+		CommandManager.registerCommand("settings", new Settings(), true);
+		CommandManager.registerCommandAlias("set", "settings");
+		CommandManager.registerCommandAlias("configure", "settings");
+		CommandManager.registerCommandAlias("config", "settings");
 
 		logger.info("Everything seems to be ready! Enabling command listener...");
 		jda.addEventListener(new GuildMessageReceived());
