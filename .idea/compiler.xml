@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="LogalBot.main" target="1.8" />
-      <module name="LogalBot.test" target="1.8" />
+      <module name="Boteronie.main" target="1.8" />
+      <module name="Boteronie.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/LogalBot.iml" filepath="$PROJECT_DIR$/LogalBot.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LogalBot.main.iml" filepath="$PROJECT_DIR$/.idea/modules/LogalBot.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LogalBot.test.iml" filepath="$PROJECT_DIR$/.idea/modules/LogalBot.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Boteronie.iml" filepath="$PROJECT_DIR$/Boteronie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Boteronie.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Boteronie.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Boteronie.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Boteronie.test.iml" />
     </modules>
   </component>
 </project>
